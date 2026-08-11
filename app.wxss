@@ -1,0 +1,13 @@
+/**app.wxss 全局样式**/
+page {
+  background: #f0f2f5;
+  font-size: 28rpx;
+  color: #1d2129;
+  -webkit-font-smoothing: antialiased;
+}
+
+view,
+text,
+button {
+  box-sizing: border-box;
+}

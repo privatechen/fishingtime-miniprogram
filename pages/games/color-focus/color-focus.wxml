@@ -1,0 +1,78 @@
+<view class="page">
+  <!-- 规则说明 -->
+  <view wx:if="{{view === 'intro'}}" class="card intro-card">
+    <view class="intro-title">专注色彩</view>
+    <view class="rule-item"><text class="rule-label">看颜色</text><text>选择字体实际显示的颜色</text></view>
+    <view class="rule-item"><text class="rule-label">看文字</text><text>选择文字表达的颜色</text></view>
+    <view class="intro-duration">挑战时间：30 秒</view>
+    <view wx:if="{{localBest > 0}}" class="intro-best">历史最高分：{{localBest}}</view>
+    <button class="btn-start" bindtap="startGame">开始挑战</button>
+  </view>
+
+  <!-- 游戏中 -->
+  <view wx:elif="{{view === 'playing'}}" class="play-area">
+    <view class="play-topbar">
+      <view class="top-btn" bindtap="backToGames">← 返回</view>
+      <view class="game-name">专注色彩</view>
+      <view class="timer {{remainingSeconds <= 5 && remainingSeconds > 0 ? 'timer-hurry' : ''}}">{{remainingSeconds}}s</view>
+    </view>
+
+    <view class="rule-tag {{rulePulse ? 'rule-pulse' : ''}}">{{ruleText}}</view>
+
+    <view class="question-area">
+      <text wx:if="{{question}}" class="question-word" style="color: {{questionColor}}">{{question.word}}</text>
+    </view>
+
+    <view class="answers">
+      <view
+        wx:for="{{colors}}"
+        wx:key="*this"
+        class="answer-btn {{feedback && feedback.answer === item ? (feedback.correct ? 'answer-ok' : 'answer-bad') : ''}}"
+        data-color="{{item}}"
+        bindtap="handleAnswer"
+      >{{item}}</view>
+    </view>
+
+    <view class="bottom-info">
+      <text>得分 {{score}}</text>
+      <text wx:if="{{streak >= 2}}" class="streak-tip">连对 {{streak}}</text>
+    </view>
+  </view>
+
+  <!-- 结果 -->
+  <view wx:elif="{{view === 'result' && result}}" class="card result-card">
+    <view class="result-score">{{result.score}}</view>
+    <view class="result-grid">
+      <view class="result-item"><text>答题</text><text>{{result.totalCount}}</text></view>
+      <view class="result-item"><text>正确</text><text class="ok">{{result.correctCount}}</text></view>
+      <view class="result-item"><text>错误</text><text class="bad">{{result.wrongCount}}</text></view>
+      <view class="result-item"><text>正确率</text><text>{{accuracyText}}</text></view>
+      <view class="result-item"><text>平均反应</text><text>{{reactionText}}</text></view>
+      <view class="result-item"><text>最高连对</text><text>{{result.maxStreak}}</text></view>
+    </view>
+    <view wx:if="{{localBest > 0}}" class="result-best">本地最佳 {{localBest}}</view>
+    <view class="result-actions">
+      <button class="result-btn secondary" bindtap="backToGames">返回列表</button>
+      <button class="result-btn secondary" bindtap="onOpenRanking">排行榜</button>
+      <button class="result-btn primary" loading="{{saving}}" disabled="{{saving}}" bindtap="onSaveScore">保存成绩</button>
+      <button class="result-btn primary" bindtap="startGame">再来一次</button>
+    </view>
+  </view>
+
+  <!-- 排行榜弹层 -->
+  <view wx:if="{{showRanking}}" class="rank-mask" bindtap="onCloseRanking">
+    <view class="rank-sheet" catchtap="noop">
+      <view class="rank-title">排行榜 Top20</view>
+      <view wx:if="{{rankingLoading}}" class="rank-state">加载中...</view>
+      <view wx:elif="{{rankingList.length === 0}}" class="rank-state">暂无排行数据，快去挑战吧</view>
+      <scroll-view wx:else scroll-y class="rank-list">
+        <view wx:for="{{rankingList}}" wx:key="rank" class="rank-item">
+          <text class="rank-no {{item.rank <= 3 ? 'rank-top' : ''}}">{{item.rank}}</text>
+          <text class="rank-name">{{item.nickname}}</text>
+          <text class="rank-score">{{item.bestScore}}</text>
+        </view>
+      </scroll-view>
+      <view class="rank-close" bindtap="onCloseRanking">关闭</view>
+    </view>
+  </view>
+</view>

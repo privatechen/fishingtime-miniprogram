@@ -1,0 +1,36 @@
+interface GameItem {
+  id: string
+  name: string
+  desc: string
+  icon: string
+  /** 可玩游戏的路由；未开发为 undefined */
+  path?: string
+}
+
+const GAMES: GameItem[] = [
+  { id: 'color-focus', name: '专注色彩', desc: '30 秒专注力挑战', icon: '🎨', path: '/pages/games/color-focus/color-focus' },
+  { id: '2048', name: '2048', desc: '合并数字挑战高分', icon: '🎯' },
+  { id: 'direction-trap', name: '方向陷阱', desc: '30 秒反应挑战', icon: '🧭' },
+  { id: 'color-hunter', name: '颜色猎手', desc: '找出所有目标颜色', icon: '🔍' },
+]
+
+Page({
+  data: {
+    games: GAMES,
+  },
+
+  /** 点击游戏卡片：可玩则进入游戏页，未开发提示 */
+  onGameTap(e: WechatMiniprogram.TouchEvent) {
+    const index = e.currentTarget.dataset.index as number
+    const game = this.data.games[index]
+    if (!game) return
+    if (game.path) {
+      wx.navigateTo({
+        url: game.path,
+        fail: () => wx.showToast({ title: '页面不存在，请重新编译', icon: 'none' }),
+      })
+    } else {
+      wx.showToast({ title: '敬请期待，正在开发中～', icon: 'none' })
+    }
+  },
+})

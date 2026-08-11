@@ -1,0 +1,13 @@
+# 设计文档（PRD），不参与代码提交
+方案/
+
+# macOS
+.DS_Store
+
+# 依赖与构建
+node_modules/
+miniprogram_npm/
+dist/
+
+# 微信开发者工具
+project.private.config.json

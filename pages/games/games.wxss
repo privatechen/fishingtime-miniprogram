@@ -1,0 +1,46 @@
+.page {
+  padding: 20rpx;
+  background: #f0f2f5;
+  min-height: 100vh;
+}
+
+.game-list {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 8rpx 24rpx;
+}
+
+.game-card {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 0;
+  border-bottom: 1rpx solid #f0f2f5;
+}
+.game-card:last-child {
+  border-bottom: none;
+}
+
+.game-icon {
+  font-size: 56rpx;
+  margin-right: 24rpx;
+  line-height: 1;
+}
+
+.game-info {
+  flex: 1;
+}
+.game-name {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+.game-desc {
+  font-size: 24rpx;
+  color: #86909c;
+  margin-top: 6rpx;
+}
+
+.game-arrow {
+  color: #c9cdd4;
+  font-size: 40rpx;
+  line-height: 1;
+}

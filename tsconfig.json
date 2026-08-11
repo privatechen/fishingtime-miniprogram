@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2020",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": ["miniprogram-api-typings"],
+    "lib": ["ES2020"]
+  },
+  "include": ["app.ts", "config/**/*", "utils/**/*", "types/**/*", "pages/**/*"],
+  "exclude": ["node_modules", "方案"]
+}

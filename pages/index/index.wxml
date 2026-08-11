@@ -1,0 +1,96 @@
+<view class="page">
+  <!-- 全网共同热点（为空时整个模块隐藏） -->
+  <view wx:if="{{commonHotspots.length > 0}}" class="common-card">
+    <view class="common-header">🌐 全网共同热点</view>
+    <view
+      wx:for="{{commonHotspots}}"
+      wx:key="title"
+      class="common-item"
+      data-index="{{index}}"
+      bindtap="onCommonTap"
+    >
+      <view class="common-keywords">{{item.title}}</view>
+      <view class="common-sources">
+        <text
+          wx:for="{{item.sources}}"
+          wx:for-item="src"
+          wx:key="platform"
+          class="common-source"
+        >{{src.platformName}} #{{src.rank}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 平台 Tab（点击切换，与 swiper 联动） -->
+  <view class="tabs">
+    <view
+      wx:for="{{platforms}}"
+      wx:key="id"
+      class="tab {{activePlatform === item.id ? 'tab-active' : ''}}"
+      data-platform="{{item.id}}"
+      bindtap="onTabTap"
+    >{{item.name}}</view>
+  </view>
+
+  <view wx:if="{{lastUpdateTime}}" class="update-time">更新于 {{lastUpdateTime}}</view>
+
+  <!-- 榜单：swiper 左右滑动切换平台（懒加载，各自缓存） -->
+  <swiper class="swiper" current="{{current}}" bindchange="onSwiperChange">
+    <swiper-item wx:for="{{platforms}}" wx:key="id">
+      <scroll-view
+        scroll-y
+        class="platform-scroll"
+        refresher-enabled
+        refresher-triggered="{{refreshing}}"
+        bindrefresherrefresh="onRefresh"
+      >
+        <view class="hot-list">
+          <view
+            wx:for="{{platformCache[item.id] || []}}"
+            wx:for-item="hot"
+            wx:key="rank"
+            class="hot-item"
+            data-url="{{hot.url}}"
+            bindtap="onHotTap"
+          >
+            <text class="hot-rank {{hot.rank <= 3 ? 'hot-rank-top' : ''}}">{{hot.rank}}</text>
+            <text class="hot-title">{{hot.title}}</text>
+          </view>
+
+          <view wx:if="{{!platformLoaded[item.id]}}" class="state-tip">加载中...</view>
+          <view
+            wx:elif="{{!(platformCache[item.id] && platformCache[item.id].length)}}"
+            class="state-tip"
+          >暂时没有可用热点</view>
+        </view>
+      </scroll-view>
+    </swiper-item>
+  </swiper>
+
+  <!-- 共同热点详情弹层 -->
+  <view wx:if="{{showCommonDetail}}" class="common-mask" bindtap="onCloseCommonDetail">
+    <view class="common-detail" catchtap="noop">
+      <view class="common-detail-title">相关热点</view>
+      <view
+        wx:for="{{commonDetail}}"
+        wx:key="title"
+        class="common-detail-item"
+        data-index="{{index}}"
+        bindtap="onCommonItemTap"
+      >
+        <text class="common-detail-platform">{{item.platformName}}</text>
+        <text class="common-detail-text">{{item.title}}</text>
+      </view>
+      <view class="common-detail-close" bindtap="onCloseCommonDetail">关闭</view>
+    </view>
+  </view>
+
+  <!-- 外部链接操作弹层（来源 + 复制） -->
+  <view wx:if="{{showAction}}" class="action-mask" bindtap="onCloseAction">
+    <view class="action-sheet" catchtap="noop">
+      <view class="action-title">该内容来自{{actionSource}}</view>
+      <view class="action-btn" bindtap="onCopyLink">复制链接</view>
+      <view class="action-btn action-cancel" bindtap="onCloseAction">取消</view>
+    </view>
+  </view>
+</view>

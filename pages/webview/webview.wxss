@@ -1,0 +1,6 @@
+.empty-tip {
+  padding: 200rpx 0;
+  text-align: center;
+  color: #86909c;
+  font-size: 28rpx;
+}

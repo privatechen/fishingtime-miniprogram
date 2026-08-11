@@ -1,0 +1,2 @@
+<web-view wx:if="{{webUrl}}" src="{{webUrl}}" binderror="onWebError"></web-view>
+<view wx:else class="empty-tip">链接无效</view>

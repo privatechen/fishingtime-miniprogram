@@ -1,0 +1,58 @@
+<view class="page">
+  <!-- 身份区 -->
+  <view class="identity-card">
+    <view class="identity-icon">🐟</view>
+    <view class="identity-body">
+      <view class="identity-name">{{loggedIn ? nickname : '未登录'}}</view>
+    </view>
+    <button
+      wx:if="{{!loggedIn}}"
+      class="save-btn"
+      loading="{{loggingIn}}"
+      bindtap="onSaveRecord"
+    >登录/注册</button>
+  </view>
+
+  <!-- 我的游戏 -->
+  <view class="section">
+    <view class="section-title">我的游戏</view>
+    <view wx:for="{{games}}" wx:key="id" class="game-item" data-id="{{item.id}}" bindtap="onGameTap">
+      <view class="game-icon">{{item.icon}}</view>
+      <view class="game-info">
+        <view class="game-name">{{item.name}}</view>
+        <view class="game-primary">{{item.primaryLabel}} {{item.primaryValue}}</view>
+        <view wx:if="{{item.secondaryValue}}" class="game-secondary">{{item.secondaryLabel}} {{item.secondaryValue}}</view>
+      </view>
+      <view class="game-arrow">›</view>
+    </view>
+  </view>
+
+  <!-- 更多 -->
+  <view class="section">
+    <view class="more-item" bindtap="onFeedbackTap">
+      <text>说你要啥</text><text class="more-arrow">›</text>
+    </view>
+    <view class="more-item" bindtap="onAbout">
+      <text>关于摸鱼</text><text class="more-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 反馈输入弹层 -->
+  <view wx:if="{{showFeedback}}" class="feedback-mask" bindtap="onCloseFeedback">
+    <view class="feedback-sheet" catchtap="noop">
+      <view class="feedback-title">说你要啥</view>
+      <textarea
+        class="feedback-textarea"
+        value="{{feedbackContent}}"
+        placeholder="说说你的想法，或提点建议～"
+        maxlength="200"
+        bindinput="onFeedbackInput"
+      ></textarea>
+      <view class="feedback-count">{{feedbackContent.length}}/200</view>
+      <view class="feedback-actions">
+        <button class="feedback-btn" bindtap="onCloseFeedback">取消</button>
+        <button class="feedback-btn feedback-submit" loading="{{feedbackSubmitting}}" bindtap="onSubmitFeedback">提交</button>
+      </view>
+    </view>
+  </view>
+</view>

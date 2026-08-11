@@ -1,0 +1,13 @@
+{
+  "name": "fishingtime-miniprogram",
+  "version": "1.0.0",
+  "description": "FishingTime 微信小程序",
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "miniprogram-api-typings": "^4.0.0",
+    "typescript": "^5.4.0"
+  }
+}
