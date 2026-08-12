@@ -36,6 +36,7 @@ Page({
     showAction: false,
     actionSource: '',
     actionUrl: '',
+    actionTip: '你以为会打开详情？我也想，可惜跳不出去～只能复制 → 浏览器 → 粘贴',
   },
 
   onLoad() {

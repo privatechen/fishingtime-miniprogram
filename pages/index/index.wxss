@@ -205,7 +205,14 @@
   text-align: center;
   font-size: 28rpx;
   color: #86909c;
-  padding: 16rpx 0 24rpx;
+  padding: 16rpx 0 12rpx;
+}
+.action-tip {
+  text-align: center;
+  font-size: 24rpx;
+  color: #a9aeb8;
+  line-height: 1.5;
+  padding: 0 16rpx 24rpx;
 }
 .action-btn {
   text-align: center;

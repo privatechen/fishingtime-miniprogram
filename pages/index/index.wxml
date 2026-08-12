@@ -89,6 +89,7 @@
   <view wx:if="{{showAction}}" class="action-mask" bindtap="onCloseAction">
     <view class="action-sheet" catchtap="noop">
       <view class="action-title">该内容来自{{actionSource}}</view>
+      <view class="action-tip">{{actionTip}}</view>
       <view class="action-btn" bindtap="onCopyLink">复制链接</view>
       <view class="action-btn action-cancel" bindtap="onCloseAction">取消</view>
     </view>
