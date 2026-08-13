@@ -1,0 +1,101 @@
+<view class="page" catchtouchmove="onPageTouchMove" catchtouchend="onPageTouchEnd">
+  <view class="topbar">
+    <view class="top-btn" bindtap="backToGames">← 返回</view>
+    <view class="game-name">2048</view>
+    <view class="top-placeholder"></view>
+  </view>
+
+  <view class="scores">
+    <view class="score-box">
+      <text class="score-label">当前分数</text>
+      <text class="score-value">{{score}}</text>
+    </view>
+    <view class="score-box">
+      <text class="score-label">最高分</text>
+      <text class="score-value">{{best}}</text>
+    </view>
+  </view>
+
+  <!-- 棋盘（触摸滑动操作）：16 个固定背景格 + tiles 绝对定位（transform 位移动画） -->
+  <view class="board {{moveFail ? 'board-shake' : ''}}" catchtouchstart="onTouchStart">
+    <view wx:for="{{emptyCells}}" wx:key="index" class="cell"></view>
+    <view
+      wx:for="{{tiles}}"
+      wx:key="id"
+      class="tile"
+      style="transform: translate({{item.col * 100}}%, {{item.row * 100}}%);"
+    >
+      <view class="tile-inner tile-{{item.value}} {{item.isNew ? 'tile-pop' : ''}}">{{item.value}}</view>
+    </view>
+  </view>
+
+  <view class="ops">
+    <button class="op-btn" bindtap="onRestartTap">重新开始</button>
+    <button class="op-btn" bindtap="onRuleTap">游戏规则</button>
+    <button class="op-btn" loading="{{saving}}" disabled="{{saving}}" bindtap="onSaveScore">保存分数</button>
+    <button class="op-btn" bindtap="onOpenRanking">排行榜</button>
+  </view>
+
+  <!-- 规则弹窗 -->
+  <view wx:if="{{showRule}}" class="mask" bindtap="closeRule">
+    <view class="dialog" catchtap="noop">
+      <view class="dialog-title">游戏规则</view>
+      <view class="dialog-body">上下左右滑动，相同数字相撞合并；每次有效移动后生成新数字；目标是合成 2048，达成后仍可继续挑战更高。</view>
+      <button class="dialog-btn primary" bindtap="closeRule">知道了</button>
+    </view>
+  </view>
+
+  <!-- 重新开始确认 -->
+  <view wx:if="{{showRestart}}" class="mask" bindtap="cancelRestart">
+    <view class="dialog" catchtap="noop">
+      <view class="dialog-title">重新开始？</view>
+      <view class="dialog-body">确定重新开始吗？当前进度将被清除。</view>
+      <view class="dialog-actions">
+        <button class="dialog-btn secondary" bindtap="cancelRestart">取消</button>
+        <button class="dialog-btn primary" bindtap="confirmRestart">重新开始</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 结算弹窗 -->
+  <view wx:if="{{showResult}}" class="mask">
+    <view class="dialog result-dialog" catchtap="noop">
+      <view class="dialog-title">游戏结束</view>
+      <view class="result-item">本局分数：{{score}}</view>
+      <view class="result-item">最大数字：{{maxTile}}</view>
+      <view class="result-item">最高分：{{best}}</view>
+      <view class="dialog-actions">
+        <button class="dialog-btn secondary" bindtap="onOpenRanking">排行榜</button>
+        <button class="dialog-btn primary" loading="{{saving}}" disabled="{{saving}}" bindtap="onSaveScore">保存成绩</button>
+      </view>
+      <view class="dialog-actions">
+        <button class="dialog-btn secondary" bindtap="backToGames">返回</button>
+        <button class="dialog-btn primary" bindtap="startNew">再来一局</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 排行榜弹层 -->
+  <view wx:if="{{showRanking}}" class="mask" bindtap="onCloseRanking">
+    <view class="rank-sheet" catchtap="noop">
+      <view class="rank-title">排行榜 Top20</view>
+      <view wx:if="{{rankingLoading}}" class="rank-state">加载中...</view>
+      <view wx:elif="{{rankingList.length === 0}}" class="rank-state">暂无排行数据，快去挑战吧</view>
+      <scroll-view wx:else scroll-y class="rank-list">
+        <view wx:for="{{rankingList}}" wx:key="rank" class="rank-item">
+          <text class="rank-no {{item.rank <= 3 ? 'rank-top' : ''}}">{{item.rank}}</text>
+          <text class="rank-name">{{item.nickname}}</text>
+          <text class="rank-score">{{item.bestScore}}</text>
+        </view>
+      </scroll-view>
+      <view class="rank-close" bindtap="onCloseRanking">关闭</view>
+    </view>
+  </view>
+
+  <!-- 设置用户名弹层（首次保存成绩时） -->
+  <username-dialog
+    visible="{{showUsernameDialog}}"
+    bind:confirmed="onUsernameConfirmed"
+    bind:close="onUsernameClose"
+  />
+</view>

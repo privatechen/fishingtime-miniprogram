@@ -3,6 +3,7 @@
     "pages/index/index",
     "pages/games/games",
     "pages/games/color-focus/color-focus",
+    "pages/games/2048/game2048",
     "pages/profile/profile",
     "pages/webview/webview"
   ],
@@ -19,8 +20,8 @@
     "backgroundColor": "#ffffff",
     "borderStyle": "black",
     "list": [
-      { "pagePath": "pages/index/index", "text": "热榜" },
-      { "pagePath": "pages/games/games", "text": "小游戏" },
+      { "pagePath": "pages/index/index", "text": "热点信息" },
+      { "pagePath": "pages/games/games", "text": "解压工具" },
       { "pagePath": "pages/profile/profile", "text": "我的" }
     ]
   },

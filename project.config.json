@@ -14,7 +14,16 @@
     "useCompilerPlugins": [
       "typescript"
     ],
-    "minifyWXML": true
+    "minifyWXML": true,
+    "compileWorklet": false,
+    "uploadWithSourceMap": true,
+    "packNpmManually": false,
+    "minifyWXSS": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true
   },
   "compileType": "miniprogram",
   "simulatorPluginLibVersion": {},
@@ -22,6 +31,7 @@
     "ignore": [],
     "include": []
   },
-  "appid": "wxc9a602fd789e0d49",
-  "editorSetting": {}
+  "appid": "wx13a237243a856ba4",
+  "editorSetting": {},
+  "libVersion": "3.17.0"
 }

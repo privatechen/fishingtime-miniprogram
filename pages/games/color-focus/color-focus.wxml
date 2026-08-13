@@ -75,4 +75,11 @@
       <view class="rank-close" bindtap="onCloseRanking">关闭</view>
     </view>
   </view>
+
+  <!-- 设置用户名弹层（首次保存成绩时） -->
+  <username-dialog
+    visible="{{showUsernameDialog}}"
+    bind:confirmed="onUsernameConfirmed"
+    bind:close="onUsernameClose"
+  />
 </view>

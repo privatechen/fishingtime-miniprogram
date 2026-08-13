@@ -55,4 +55,11 @@
       </view>
     </view>
   </view>
+
+  <!-- 设置用户名弹层（登录/注册时） -->
+  <username-dialog
+    visible="{{showUsernameDialog}}"
+    bind:confirmed="onUsernameConfirmed"
+    bind:close="onUsernameClose"
+  />
 </view>

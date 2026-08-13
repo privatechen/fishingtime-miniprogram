@@ -9,7 +9,7 @@ interface GameItem {
 
 const GAMES: GameItem[] = [
   { id: 'color-focus', name: '专注色彩', desc: '30 秒专注力挑战', icon: '🎨', path: '/pages/games/color-focus/color-focus' },
-  { id: '2048', name: '2048', desc: '合并数字挑战高分', icon: '🎯' },
+  { id: '2048', name: '2048', desc: '合并数字挑战高分', icon: '🎯', path: '/pages/games/2048/game2048' },
   { id: 'direction-trap', name: '方向陷阱', desc: '30 秒反应挑战', icon: '🧭' },
   { id: 'color-hunter', name: '颜色猎手', desc: '找出所有目标颜色', icon: '🔍' },
 ]

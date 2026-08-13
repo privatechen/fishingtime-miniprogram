@@ -50,6 +50,7 @@ Page({
     showRanking: false,
     rankingLoading: false,
     rankingList: [] as { rank: number; nickname: string; bestScore: number }[],
+    showUsernameDialog: false,
   },
 
   onShow() {
@@ -185,21 +186,39 @@ Page({
   /** 空操作：弹层 catchtap 阻止冒泡 */
   noop() {},
 
-  /** 保存成绩：先玩后登录，未建身份时引导登录/填用户名；未填则返回 false 不保存 */
+  /** 保存成绩：先玩后登录（首次需设置用户名时弹自定义弹层） */
   async onSaveScore() {
     if (this.data.saving || !this.data.result) return
+    const login = await ensureLogin()
+    if (login === 'needUsername') {
+      this.setData({ showUsernameDialog: true })
+      return
+    }
+    if (login !== 'ok') {
+      wx.showToast({ title: '未保存成绩', icon: 'none' })
+      return
+    }
+    await this.saveScoreAfterLogin()
+  },
+
+  async saveScoreAfterLogin() {
+    if (this.data.saving) return
     this.setData({ saving: true })
     try {
-      const ok = await ensureLogin()
-      if (!ok) {
-        wx.showToast({ title: '未保存成绩', icon: 'none' })
-        return
-      }
-      const ok2 = await this.submitScore()
-      wx.showToast({ title: ok2 ? '保存成功' : '成绩未保存，可稍后重试', icon: ok2 ? 'success' : 'none' })
+      const ok = await this.submitScore()
+      wx.showToast({ title: ok ? '保存成功' : '成绩未保存，可稍后重试', icon: ok ? 'success' : 'none' })
     } finally {
       this.setData({ saving: false })
     }
+  },
+
+  /** 用户名设置成功（注册已自动登录），继续保存 */
+  onUsernameConfirmed() {
+    this.setData({ showUsernameDialog: false })
+    this.saveScoreAfterLogin()
+  },
+  onUsernameClose() {
+    this.setData({ showUsernameDialog: false })
   },
 
   async submitScore(): Promise<boolean> {

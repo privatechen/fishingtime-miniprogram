@@ -1,0 +1,19 @@
+<view wx:if="{{visible}}" class="um-mask" bindtap="onClose">
+  <view class="um-sheet" catchtap="noop">
+    <view class="um-title">设置用户名</view>
+    <view class="um-tip">首次使用，设置一个用户名用于保存成绩，昵称将与之保持一致</view>
+    <input
+      class="um-input"
+      value="{{username}}"
+      maxlength="32"
+      placeholder="请输入用户名（3~32 个字符）"
+      placeholder-class="um-placeholder"
+      bindinput="onInput"
+    />
+    <view wx:if="{{error}}" class="um-error">{{error}}</view>
+    <view class="um-actions">
+      <button class="um-btn um-cancel" bindtap="onClose">取消</button>
+      <button class="um-btn um-submit" loading="{{submitting}}" disabled="{{submitting}}" bindtap="onConfirm">确认</button>
+    </view>
+  </view>
+</view>

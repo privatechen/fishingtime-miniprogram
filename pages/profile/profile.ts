@@ -49,6 +49,7 @@ Page({
     showFeedback: false,
     feedbackContent: '',
     feedbackSubmitting: false,
+    showUsernameDialog: false,
   },
 
   onShow() {
@@ -159,22 +160,23 @@ Page({
     return Math.min(a, b)
   },
 
-  /** 保存我的记录：先玩后登录，主动点击才建立身份（首次引导填用户名） */
+  /** 登录/注册：先玩后登录，主动点击才建立身份（首次需设置用户名时弹自定义弹层） */
   async onSaveRecord() {
     if (this.data.loggedIn) {
-      wx.showToast({ title: '已保存游戏记录', icon: 'success' })
+      wx.showToast({ title: '已登录', icon: 'success' })
       return
     }
     if (this.data.loggingIn) return
     this.setData({ loggingIn: true })
     wx.showLoading({ title: '登录中...' })
     try {
-      const ok = await ensureLogin()
-      if (ok) {
-        const user = getUser()
-        this.setData({ loggedIn: true, nickname: user?.nickname || '未登录' })
-        wx.showToast({ title: '登录成功', icon: 'success' })
-        this.refreshGames()
+      const login = await ensureLogin()
+      if (login === 'needUsername') {
+        this.setData({ showUsernameDialog: true })
+        return
+      }
+      if (login === 'ok') {
+        this.applyLogin()
       } else {
         wx.showToast({ title: '未登录', icon: 'none' })
       }
@@ -182,6 +184,23 @@ Page({
       wx.hideLoading()
       this.setData({ loggingIn: false })
     }
+  },
+
+  /** 登录成功：刷新身份区 + 成绩 */
+  applyLogin() {
+    const user = getUser()
+    this.setData({ loggedIn: true, nickname: user?.nickname || '未登录' })
+    wx.showToast({ title: '登录成功', icon: 'success' })
+    this.refreshGames()
+  },
+
+  /** 用户名设置成功（注册已自动登录） */
+  onUsernameConfirmed() {
+    this.setData({ showUsernameDialog: false })
+    this.applyLogin()
+  },
+  onUsernameClose() {
+    this.setData({ showUsernameDialog: false })
   },
 
   /** 点击游戏卡片：进入小游戏 Tab（V1 游戏页后续接入） */

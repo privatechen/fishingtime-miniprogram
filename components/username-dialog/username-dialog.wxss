@@ -1,0 +1,72 @@
+.um-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.um-sheet {
+  width: 600rpx;
+  max-width: 85%;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 40rpx 32rpx 32rpx;
+  box-sizing: border-box;
+}
+.um-title {
+  text-align: center;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #1d2129;
+  margin-bottom: 16rpx;
+}
+.um-tip {
+  font-size: 26rpx;
+  color: #86909c;
+  line-height: 1.5;
+  margin-bottom: 28rpx;
+}
+.um-input {
+  width: 100%;
+  height: 84rpx;
+  background: #f7f8fa;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+.um-placeholder {
+  color: #c9cdd4;
+}
+.um-error {
+  color: #e74c3c;
+  font-size: 24rpx;
+  margin-top: 12rpx;
+}
+.um-actions {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 32rpx;
+}
+.um-btn {
+  flex: 1;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+.um-btn::after {
+  border: none;
+}
+.um-cancel {
+  background: #f2f3f5;
+  color: #4e5969;
+}
+.um-submit {
+  background: #2d8cf0;
+  color: #fff;
+}
