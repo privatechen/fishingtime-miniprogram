@@ -185,7 +185,7 @@ Page({
     const comboEf = sEf?.bestMaxCombo ?? local['extreme-fishing']?.combo
     if (bestEf != null) {
       views.push({
-        id: 'extreme-fishing', name: '极限捞鱼', icon: '🎣', hasIcon: false,
+        id: 'extreme-fishing', name: '极限捞鱼', icon: '/assets/games/extreme-fishing.png', hasIcon: true,
         primaryLabel: '最高分', primaryValue: String(bestEf),
         secondaryLabel: '最高Combo', secondaryValue: comboEf != null ? `×${comboEf}` : '',
       })

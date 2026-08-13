@@ -15,7 +15,7 @@ const GAMES: GameItem[] = [
   { id: 'direction-trap', name: '方向陷阱', desc: '30 秒反应挑战', icon: '🧭', cover: '/assets/games/direction-trap.png', path: '/pages/games/direction-trap/direction-trap' },
   { id: 'color-hunter', name: '颜色猎手', desc: '找出所有目标颜色', icon: '🔍', cover: '/assets/games/color-hunter.png', path: '/pages/games/color-hunter/color-hunter' },
   { id: 'fish-breakout', name: '鱼群突围', desc: '30 秒连续清空鱼池', icon: '🐟', cover: '/assets/games/fish-breakout.png', path: '/pages/games/fish-breakout/fish-breakout' },
-  { id: 'extreme-fishing', name: '极限捞鱼', desc: '拖动撒网，30 秒冲分', icon: '🎣', path: '/pages/games/extreme-fishing/extreme-fishing' },
+  { id: 'extreme-fishing', name: '极限捞鱼', desc: '拖动撒网，30 秒冲分', icon: '🎣', cover: '/assets/games/extreme-fishing.png', path: '/pages/games/extreme-fishing/extreme-fishing' },
 ]
 
 Page({
