@@ -11,6 +11,9 @@ interface ServerRecord {
   bestFinalTime?: number
   bestActualTime?: number
   lowestErrorCount?: number
+  bestClearedPools?: number
+  bestReleasedFish?: number
+  bestMistakes?: number
 }
 
 /** 我的游戏展示视图 */
@@ -30,6 +33,7 @@ interface LocalRecords {
   'color-focus'?: { best?: number; accuracy?: number }
   'direction-trap'?: { best?: number }
   'color-hunter'?: { finalTime?: number }
+  'fish-breakout'?: { clearedPools?: number; releasedFish?: number }
 }
 
 const GAME_LOCAL_KEYS: Record<string, string> = {
@@ -38,6 +42,8 @@ const GAME_LOCAL_KEYS: Record<string, string> = {
   'color-focus:accuracy': 'fishingtime:local:color-focus:accuracy',
   'direction-trap': 'fishingtime:local:direction-trap:best',
   'color-hunter': 'fishingtime:local:color-hunter:finalTime',
+  'fish-breakout': 'fishingtime:local:fish-breakout:bestClearedPools',
+  'fish-breakout:fish': 'fishingtime:local:fish-breakout:bestReleasedFish',
 }
 
 Page({
@@ -93,6 +99,10 @@ Page({
       },
       'direction-trap': { best: num(GAME_LOCAL_KEYS['direction-trap']) },
       'color-hunter': { finalTime: num(GAME_LOCAL_KEYS['color-hunter']) },
+      'fish-breakout': {
+        clearedPools: num(GAME_LOCAL_KEYS['fish-breakout']),
+        releasedFish: num(GAME_LOCAL_KEYS['fish-breakout:fish']),
+      },
     }
   },
 
@@ -143,6 +153,17 @@ Page({
         id: 'color-hunter', name: '颜色猎手', icon: '🔍',
         primaryLabel: '最佳成绩', primaryValue: fmtSeconds(finalTime),
         secondaryLabel: '最少错误', secondaryValue: sCh?.lowestErrorCount != null ? String(sCh.lowestErrorCount) : '',
+      })
+    }
+
+    const sFb = s('fish-breakout')
+    const bestFb = this.maxNum(sFb?.bestClearedPools, local['fish-breakout']?.clearedPools)
+    const releasedFb = sFb?.bestReleasedFish ?? local['fish-breakout']?.releasedFish
+    if (bestFb != null) {
+      views.push({
+        id: 'fish-breakout', name: '鱼群突围', icon: '🐟',
+        primaryLabel: '最高清空', primaryValue: `${bestFb} 池`,
+        secondaryLabel: '放生', secondaryValue: releasedFb != null ? `${releasedFb} 条` : '',
       })
     }
     return views

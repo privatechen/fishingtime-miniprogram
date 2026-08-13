@@ -1,0 +1,97 @@
+<view class="page">
+  <!-- 规则说明（单一规则页） -->
+  <view wx:if="{{view === 'intro'}}" class="card intro-card">
+    <view class="intro-title">鱼群突围</view>
+    <view class="rule-item">① 点击前方没有其他鱼的鱼儿，它就会游出去。</view>
+    <view class="rule-item">② 被挡住的鱼需要等前面的鱼先走，别点错。</view>
+    <view class="rule-item">③ 30 秒挑战，失误 3 次提前结束。</view>
+    <view wx:if="{{localBestText}}" class="intro-best">历史最佳：{{localBestText}}</view>
+    <button class="btn-start" bindtap="startGame">开始游戏</button>
+  </view>
+
+  <!-- 3、2、1 倒计时 -->
+  <view wx:elif="{{view === 'countdown'}}" class="countdown-view">
+    <view class="countdown-num">{{countdown}}</view>
+    <view class="countdown-tip">准备，找出能出去的鱼</view>
+  </view>
+
+  <!-- 游戏中 -->
+  <view wx:elif="{{view === 'playing'}}" class="play-area">
+    <view class="play-topbar">
+      <view class="top-btn" bindtap="backToGames">← 返回</view>
+      <view class="game-name">鱼群突围</view>
+      <view class="timer {{remainingSeconds <= 5 && remainingSeconds > 0 ? 'timer-hurry' : ''}}">{{remainingSeconds}}s</view>
+    </view>
+
+    <view class="hud">
+      <text>清空 <text class="hud-num">{{clearedPools}}</text> 池</text>
+      <text>放生 <text class="hud-num">{{releasedFish}}</text> 条</text>
+      <text>失误 <text class="hud-num {{mistakes >= 3 ? 'hud-danger' : ''}}">{{mistakes}}</text>/3</text>
+    </view>
+
+    <view class="board-wrap">
+      <view class="board-frame">
+        <view class="fish-board">
+          <view
+            wx:for="{{cells}}"
+            wx:key="id"
+            class="fish-wrap dir-{{item.dir}} {{item.exiting ? 'exiting' : ''}} {{item.mistake ? 'mistake' : ''}}"
+            style="left:{{item.col * 20}}%;top:{{item.row * 20}}%;width:20%;height:20%;"
+            data-id="{{item.id}}"
+            bindtap="onCellTap"
+          >
+            <view class="fish-inner" style="transform: rotate({{item.rotate}}deg);"></view>
+          </view>
+        </view>
+      </view>
+      <!-- 清池过渡层（锁定点击） -->
+      <view wx:if="{{poolTransition}}" class="pool-mask">{{transitionText}}</view>
+    </view>
+
+    <view class="play-hint">点击前方没有鱼的鱼儿，让它游出去</view>
+  </view>
+
+  <!-- 结果 -->
+  <view wx:elif="{{view === 'result' && result}}" class="card result-card">
+    <view class="result-title">{{result.endedBy === 'mistakes' ? '挑战失败' : '时间到！'}}</view>
+    <view wx:if="{{result.endedBy === 'mistakes'}}" class="result-fail">失误 {{result.mistakes}} 次，本局提前结束</view>
+    <view class="result-score">{{result.clearedPools}}<text class="result-unit"> 池</text></view>
+    <view class="result-grid">
+      <view class="result-item"><text>成功放生</text><text>{{result.releasedFish}} 条</text></view>
+      <view class="result-item"><text>失误</text><text>{{result.mistakes}} 次</text></view>
+      <view class="result-item"><text>准确率</text><text>{{accuracyText}}</text></view>
+    </view>
+    <view wx:if="{{isNewBest}}" class="result-new">新纪录！</view>
+    <view wx:if="{{localBestText}}" class="result-best">最佳纪录：{{localBestText}}</view>
+    <view class="result-actions">
+      <button class="result-btn secondary" bindtap="backToGames">返回小游戏</button>
+      <button class="result-btn secondary" bindtap="onOpenRanking">查看排行榜</button>
+      <button class="result-btn primary" loading="{{saving}}" disabled="{{saving}}" bindtap="onSaveScore">保存成绩</button>
+      <button class="result-btn primary" bindtap="startGame">再来一局</button>
+    </view>
+  </view>
+
+  <!-- 排行榜弹层 -->
+  <view wx:if="{{showRanking}}" class="rank-mask" bindtap="onCloseRanking">
+    <view class="rank-sheet" catchtap="noop">
+      <view class="rank-title">排行榜 Top20（清空池数）</view>
+      <view wx:if="{{rankingLoading}}" class="rank-state">加载中...</view>
+      <view wx:elif="{{rankingList.length === 0}}" class="rank-state">暂无排行数据，快去挑战吧</view>
+      <scroll-view wx:else scroll-y class="rank-list">
+        <view wx:for="{{rankingList}}" wx:key="rank" class="rank-item">
+          <text class="rank-no {{item.rank <= 3 ? 'rank-top' : ''}}">{{item.rank}}</text>
+          <text class="rank-name">{{item.nickname}}</text>
+          <text class="rank-score">{{item.poolsText}}</text>
+        </view>
+      </scroll-view>
+      <view class="rank-close" bindtap="onCloseRanking">关闭</view>
+    </view>
+  </view>
+
+  <!-- 设置用户名弹层（首次保存成绩时） -->
+  <username-dialog
+    visible="{{showUsernameDialog}}"
+    bind:confirmed="onUsernameConfirmed"
+    bind:close="onUsernameClose"
+  />
+</view>

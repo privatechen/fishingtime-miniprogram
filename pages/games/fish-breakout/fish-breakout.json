@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "鱼群突围",
+  "usingComponents": {
+    "username-dialog": "/components/username-dialog/username-dialog"
+  }
+}
