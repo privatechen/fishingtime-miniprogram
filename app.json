@@ -6,6 +6,7 @@
     "pages/games/direction-trap/direction-trap",
     "pages/games/color-hunter/color-hunter",
     "pages/games/fish-breakout/fish-breakout",
+    "pages/games/extreme-fishing/extreme-fishing",
     "pages/games/2048/game2048",
     "pages/profile/profile",
     "pages/webview/webview"

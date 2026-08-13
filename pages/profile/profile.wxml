@@ -18,7 +18,8 @@
     <view class="section-title">我的游戏</view>
     <view wx:for="{{games}}" wx:key="id" class="game-item" data-id="{{item.id}}" bindtap="onGameTap">
       <view class="game-icon">
-        <image class="game-icon-img" src="{{item.icon}}" mode="aspectFill" />
+        <image wx:if="{{item.hasIcon}}" class="game-icon-img" src="{{item.icon}}" mode="aspectFill" />
+        <text wx:else class="game-icon-emoji">{{item.icon}}</text>
       </view>
       <view class="game-info">
         <view class="game-name">{{item.name}}</view>

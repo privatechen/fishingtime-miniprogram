@@ -14,13 +14,19 @@ interface ServerRecord {
   bestClearedPools?: number
   bestReleasedFish?: number
   bestMistakes?: number
+  bestPerfectCount?: number
+  bestMaxCombo?: number
+  bestPufferMistakes?: number
 }
 
 /** 我的游戏展示视图 */
 interface GameRecordView {
   id: string
   name: string
+  /** emoji 或图片路径 */
   icon: string
+  /** 图标是否为图片路径（true 渲染 image，false 渲染 emoji） */
+  hasIcon: boolean
   primaryLabel: string
   primaryValue: string
   secondaryLabel: string
@@ -34,6 +40,7 @@ interface LocalRecords {
   'direction-trap'?: { best?: number }
   'color-hunter'?: { finalTime?: number }
   'fish-breakout'?: { clearedPools?: number; releasedFish?: number }
+  'extreme-fishing'?: { score?: number; combo?: number }
 }
 
 const GAME_LOCAL_KEYS: Record<string, string> = {
@@ -44,6 +51,8 @@ const GAME_LOCAL_KEYS: Record<string, string> = {
   'color-hunter': 'fishingtime:local:color-hunter:finalTime',
   'fish-breakout': 'fishingtime:local:fish-breakout:bestClearedPools',
   'fish-breakout:fish': 'fishingtime:local:fish-breakout:bestReleasedFish',
+  'extreme-fishing': 'fishingtime:local:extreme-fishing:bestScore',
+  'extreme-fishing:combo': 'fishingtime:local:extreme-fishing:bestCombo',
 }
 
 Page({
@@ -103,6 +112,10 @@ Page({
         clearedPools: num(GAME_LOCAL_KEYS['fish-breakout']),
         releasedFish: num(GAME_LOCAL_KEYS['fish-breakout:fish']),
       },
+      'extreme-fishing': {
+        score: num(GAME_LOCAL_KEYS['extreme-fishing']),
+        combo: num(GAME_LOCAL_KEYS['extreme-fishing:combo']),
+      },
     }
   },
 
@@ -129,28 +142,28 @@ Page({
     const views: GameRecordView[] = []
     if (best2048 != null) {
       views.push({
-        id: '2048', name: '2048', icon: '/assets/games/2048.png',
+        id: '2048', name: '2048', icon: '/assets/games/2048.png', hasIcon: true,
         primaryLabel: '最高分', primaryValue: String(best2048),
         secondaryLabel: '最大方块', secondaryValue: s2048?.maxTile != null ? String(s2048.maxTile) : '',
       })
     }
     if (bestCf != null) {
       views.push({
-        id: 'color-focus', name: '专注色彩', icon: '/assets/games/color-focus.png',
+        id: 'color-focus', name: '专注色彩', icon: '/assets/games/color-focus.png', hasIcon: true,
         primaryLabel: '最高分', primaryValue: String(bestCf),
         secondaryLabel: '最高正确率', secondaryValue: fmtAccuracy(accuracy),
       })
     }
     if (bestDt != null) {
       views.push({
-        id: 'direction-trap', name: '方向陷阱', icon: '/assets/games/direction-trap.png',
+        id: 'direction-trap', name: '方向陷阱', icon: '/assets/games/direction-trap.png', hasIcon: true,
         primaryLabel: '最高分', primaryValue: String(bestDt),
         secondaryLabel: '最高连对', secondaryValue: sDt?.maxStreak != null ? String(sDt.maxStreak) : '',
       })
     }
     if (finalTime != null) {
       views.push({
-        id: 'color-hunter', name: '颜色猎手', icon: '/assets/games/color-hunter.png',
+        id: 'color-hunter', name: '颜色猎手', icon: '/assets/games/color-hunter.png', hasIcon: true,
         primaryLabel: '最佳成绩', primaryValue: fmtSeconds(finalTime),
         secondaryLabel: '最少错误', secondaryValue: sCh?.lowestErrorCount != null ? String(sCh.lowestErrorCount) : '',
       })
@@ -161,9 +174,20 @@ Page({
     const releasedFb = sFb?.bestReleasedFish ?? local['fish-breakout']?.releasedFish
     if (bestFb != null) {
       views.push({
-        id: 'fish-breakout', name: '鱼群突围', icon: '/assets/games/fish-breakout.png',
+        id: 'fish-breakout', name: '鱼群突围', icon: '/assets/games/fish-breakout.png', hasIcon: true,
         primaryLabel: '最高清空', primaryValue: `${bestFb} 池`,
         secondaryLabel: '放生', secondaryValue: releasedFb != null ? `${releasedFb} 条` : '',
+      })
+    }
+
+    const sEf = s('extreme-fishing')
+    const bestEf = this.maxNum(sEf?.bestScore, local['extreme-fishing']?.score)
+    const comboEf = sEf?.bestMaxCombo ?? local['extreme-fishing']?.combo
+    if (bestEf != null) {
+      views.push({
+        id: 'extreme-fishing', name: '极限捞鱼', icon: '🎣', hasIcon: false,
+        primaryLabel: '最高分', primaryValue: String(bestEf),
+        secondaryLabel: '最高Combo', secondaryValue: comboEf != null ? `×${comboEf}` : '',
       })
     }
     return views

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "极限捞鱼",
+  "usingComponents": {
+    "username-dialog": "/components/username-dialog/username-dialog"
+  }
+}
