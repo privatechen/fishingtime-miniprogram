@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "方向陷阱",
+  "usingComponents": {
+    "username-dialog": "/components/username-dialog/username-dialog"
+  }
+}

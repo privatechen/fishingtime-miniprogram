@@ -3,6 +3,7 @@
     "pages/index/index",
     "pages/games/games",
     "pages/games/color-focus/color-focus",
+    "pages/games/direction-trap/direction-trap",
     "pages/games/2048/game2048",
     "pages/profile/profile",
     "pages/webview/webview"
