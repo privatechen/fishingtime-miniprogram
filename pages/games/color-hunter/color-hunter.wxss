@@ -1,0 +1,364 @@
+.page {
+  padding: 24rpx 20rpx;
+  background: #f0f2f5;
+  min-height: 100vh;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  max-width: 600rpx;
+  margin: 60rpx auto 0;
+  text-align: center;
+}
+
+/* 规则页 */
+.intro-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  margin-bottom: 24rpx;
+}
+.rule-item {
+  font-size: 28rpx;
+  color: #4e5969;
+  margin-bottom: 16rpx;
+  line-height: 1.6;
+}
+.intro-duration {
+  margin-top: 20rpx;
+  font-size: 26rpx;
+  color: #86909c;
+}
+.intro-best {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: #2d8cf0;
+}
+.btn-start {
+  margin-top: 32rpx;
+  background: #2d8cf0;
+  color: #fff;
+  border-radius: 40rpx;
+  font-size: 32rpx;
+}
+.btn-start::after {
+  border: none;
+}
+
+/* 倒计时 */
+.countdown-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+}
+.countdown-num {
+  font-size: 200rpx;
+  font-weight: 800;
+  color: #2d8cf0;
+  line-height: 1;
+}
+.countdown-tip {
+  margin-top: 32rpx;
+  font-size: 30rpx;
+  color: #86909c;
+}
+
+/* 游戏中 */
+.play-area {
+  max-width: 640rpx;
+  margin: 0 auto;
+  position: relative;
+}
+.play-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+.top-btn {
+  font-size: 28rpx;
+  color: #2d8cf0;
+  padding: 8rpx 0;
+}
+.game-name {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+.timer {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1d2129;
+}
+
+.level-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
+}
+.level-tag {
+  font-size: 26rpx;
+  color: #86909c;
+}
+.phase-tag {
+  font-size: 24rpx;
+  color: #2d8cf0;
+  background: #eaf4ff;
+  border-radius: 8rpx;
+  padding: 2rpx 12rpx;
+}
+
+/* 目标提示：颜色名称 + 色块，不能只显示色块 */
+.target-prompt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  font-size: 34rpx;
+  font-weight: 700;
+  margin-bottom: 12rpx;
+}
+.target-name {
+  color: #1d2129;
+}
+.target-remain {
+  font-size: 26rpx;
+  color: #2d8cf0;
+  font-weight: 600;
+}
+.color-chip {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  display: inline-block;
+}
+.phase-pulse {
+  animation: pulse 0.25s ease;
+}
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+/* 棋盘：类似 2048 的响应式方块——不设固定尺寸，随容器宽度缩放并保持正方形，按 repeat(5,1fr) 划分 5×5 */
+.board {
+  display: grid;
+  gap: 8rpx;
+  width: 100%;
+  aspect-ratio: 1;
+}
+.board-cell {
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.board-cell.found {
+  opacity: 0.35;
+}
+.cell-check {
+  color: #fff;
+  font-size: 44rpx;
+  font-weight: 700;
+  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.35);
+}
+.cell-wrong {
+  animation: shake 0.2s ease;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8rpx); }
+  75% { transform: translateX(8rpx); }
+}
+
+.bottom-line {
+  text-align: center;
+  margin-top: 16rpx;
+  font-size: 28rpx;
+  color: #86909c;
+}
+
+/* 轮次过渡层（锁定点击，过渡计入总用时） */
+.transition-mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(240, 242, 245, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  border-radius: 16rpx;
+}
+.transition-text {
+  text-align: center;
+  font-size: 44rpx;
+  font-weight: 800;
+  color: #2d8cf0;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+/* 结果页 */
+.result-card {
+  margin-top: 40rpx;
+}
+.result-title {
+  font-size: 32rpx;
+  color: #86909c;
+  margin-bottom: 8rpx;
+}
+.result-score {
+  font-size: 96rpx;
+  font-weight: 800;
+  color: #2d8cf0;
+  line-height: 1.1;
+}
+.result-new {
+  display: inline-block;
+  margin-top: 8rpx;
+  font-size: 26rpx;
+  color: #27ae60;
+  background: #eafaf1;
+  border-radius: 24rpx;
+  padding: 4rpx 20rpx;
+}
+.result-sub {
+  display: flex;
+  justify-content: center;
+  gap: 32rpx;
+  margin: 16rpx 0 24rpx;
+  font-size: 26rpx;
+  color: #4e5969;
+}
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+.result-item {
+  background: #f7f8fa;
+  border-radius: 12rpx;
+  padding: 20rpx 4rpx;
+}
+.result-item text:first-child {
+  display: block;
+  font-size: 22rpx;
+  color: #86909c;
+  margin-bottom: 8rpx;
+}
+.result-item text:last-child {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+.result-best {
+  font-size: 26rpx;
+  color: #86909c;
+  margin-bottom: 20rpx;
+}
+.result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+.result-btn {
+  flex: 1 1 45%;
+  font-size: 28rpx;
+  border-radius: 40rpx;
+  line-height: 1.6;
+}
+.result-btn::after {
+  border: none;
+}
+.primary {
+  background: #2d8cf0;
+  color: #fff;
+}
+.secondary {
+  background: #f2f3f5;
+  color: #4e5969;
+}
+
+/* ── 排行榜弹层 ── */
+.rank-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 100;
+}
+.rank-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  border-radius: 24rpx 24rpx 0 0;
+  padding: 32rpx 24rpx;
+  padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+}
+.rank-title {
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+.rank-state {
+  text-align: center;
+  color: #c9cdd4;
+  padding: 60rpx 0;
+  font-size: 26rpx;
+}
+.rank-list {
+  flex: 1;
+  min-height: 0;
+}
+.rank-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f2f5;
+}
+.rank-no {
+  width: 60rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #86909c;
+}
+.rank-top {
+  color: #2d8cf0;
+  font-weight: 700;
+}
+.rank-name {
+  flex: 1;
+  font-size: 28rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rank-score {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #2d8cf0;
+}
+.rank-close {
+  margin-top: 20rpx;
+  text-align: center;
+  color: #86909c;
+  font-size: 28rpx;
+  padding: 16rpx;
+}

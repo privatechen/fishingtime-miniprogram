@@ -1,0 +1,106 @@
+<view class="page">
+  <!-- 规则说明 -->
+  <view wx:if="{{view === 'intro'}}" class="card intro-card">
+    <view class="intro-title">颜色猎手</view>
+    <view class="rule-item">固定 5×5 棋盘，一共 4 轮。</view>
+    <view class="rule-item">找出所有目标颜色，点中即标记，全部找完自动进入下一轮。</view>
+    <view class="rule-item">每局目标数量随机，共 22 个目标色块。</view>
+    <view class="intro-duration">眼疾手快，别漏掉</view>
+    <view wx:if="{{localBestText}}" class="intro-best">历史最佳：{{localBestText}}</view>
+    <button class="btn-start" bindtap="startGame">开始挑战</button>
+  </view>
+
+  <!-- 游戏中 -->
+  <view wx:elif="{{view === 'playing'}}" class="play-area">
+    <view class="play-topbar">
+      <view class="top-btn" bindtap="onBack">← 返回</view>
+      <view class="game-name">颜色猎手</view>
+      <view class="timer">{{currentTimeText}}s</view>
+    </view>
+
+    <view class="round-line">
+      <text class="round-tag">{{roundLabel}}</text>
+    </view>
+
+    <view class="target-prompt {{targetPulse ? 'phase-pulse' : ''}}">
+      <text>找出所有</text>
+      <view class="color-chip" style="background: {{targetColorCss}}"></view>
+      <text class="target-name">【{{targetColorName}}】</text>
+      <text class="target-remain">剩余 {{remaining}}</text>
+    </view>
+
+    <view
+      class="board"
+      style="grid-template-columns: repeat({{gridSize}}, 1fr); grid-template-rows: repeat({{gridSize}}, 1fr);"
+      catchtap="noop"
+    >
+      <view
+        wx:for="{{cells}}"
+        wx:key="id"
+        class="board-cell {{item.found ? 'found' : ''}} {{wrongId === item.id ? 'cell-wrong' : ''}}"
+        style="background: {{item.color}};"
+        data-id="{{item.id}}"
+        bindtap="onCellTap"
+      >
+        <text wx:if="{{item.found}}" class="cell-check">✓</text>
+      </view>
+    </view>
+
+    <view class="bottom-line">
+      <text>错误：{{errors}}</text>
+    </view>
+
+    <!-- 轮次过渡层（锁定点击，过渡计入总用时） -->
+    <view wx:if="{{transitioning}}" class="transition-mask">
+      <view class="transition-text">{{transitionText}}</view>
+    </view>
+  </view>
+
+  <!-- 结果 -->
+  <view wx:elif="{{view === 'result' && result}}" class="card result-card">
+    <view class="result-title">挑战完成！</view>
+    <view class="result-score">{{totalText}}</view>
+    <view wx:if="{{isNewBest}}" class="result-new">新纪录</view>
+    <view class="result-sub">
+      <text>错误：{{result.errors}} 次</text>
+      <text>准确率：{{accuracyText}}</text>
+    </view>
+    <view class="result-grid">
+      <view class="result-item"><text>Round 1</text><text>{{roundTexts[0]}}</text></view>
+      <view class="result-item"><text>Round 2</text><text>{{roundTexts[1]}}</text></view>
+      <view class="result-item"><text>Round 3</text><text>{{roundTexts[2]}}</text></view>
+      <view class="result-item"><text>Round 4</text><text>{{roundTexts[3]}}</text></view>
+    </view>
+    <view wx:if="{{localBestText}}" class="result-best">最佳：{{localBestText}}</view>
+    <view class="result-actions">
+      <button class="result-btn secondary" bindtap="backToGames">返回小游戏</button>
+      <button class="result-btn secondary" bindtap="onOpenRanking">排行榜</button>
+      <button class="result-btn primary" loading="{{saving}}" disabled="{{saving}}" bindtap="onSaveScore">保存成绩</button>
+      <button class="result-btn primary" bindtap="startGame">再来一局</button>
+    </view>
+  </view>
+
+  <!-- 排行榜弹层 -->
+  <view wx:if="{{showRanking}}" class="rank-mask" bindtap="onCloseRanking">
+    <view class="rank-sheet" catchtap="noop">
+      <view class="rank-title">排行榜 Top20（用时升序）</view>
+      <view wx:if="{{rankingLoading}}" class="rank-state">加载中...</view>
+      <view wx:elif="{{rankingList.length === 0}}" class="rank-state">暂无排行数据，快去挑战吧</view>
+      <scroll-view wx:else scroll-y class="rank-list">
+        <view wx:for="{{rankingList}}" wx:key="rank" class="rank-item">
+          <text class="rank-no {{item.rank <= 3 ? 'rank-top' : ''}}">{{item.rank}}</text>
+          <text class="rank-name">{{item.nickname}}</text>
+          <text class="rank-score">{{item.timeText}}</text>
+        </view>
+      </scroll-view>
+      <view class="rank-close" bindtap="onCloseRanking">关闭</view>
+    </view>
+  </view>
+
+  <!-- 设置用户名弹层（首次保存成绩时） -->
+  <username-dialog
+    visible="{{showUsernameDialog}}"
+    bind:confirmed="onUsernameConfirmed"
+    bind:close="onUsernameClose"
+  />
+</view>

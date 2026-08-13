@@ -4,6 +4,7 @@
     "pages/games/games",
     "pages/games/color-focus/color-focus",
     "pages/games/direction-trap/direction-trap",
+    "pages/games/color-hunter/color-hunter",
     "pages/games/2048/game2048",
     "pages/profile/profile",
     "pages/webview/webview"

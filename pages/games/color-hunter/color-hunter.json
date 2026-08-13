@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "颜色猎手",
+  "usingComponents": {
+    "username-dialog": "/components/username-dialog/username-dialog"
+  }
+}
