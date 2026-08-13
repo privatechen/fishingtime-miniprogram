@@ -129,28 +129,28 @@ Page({
     const views: GameRecordView[] = []
     if (best2048 != null) {
       views.push({
-        id: '2048', name: '2048', icon: '🎯',
+        id: '2048', name: '2048', icon: '/assets/games/2048.png',
         primaryLabel: '最高分', primaryValue: String(best2048),
         secondaryLabel: '最大方块', secondaryValue: s2048?.maxTile != null ? String(s2048.maxTile) : '',
       })
     }
     if (bestCf != null) {
       views.push({
-        id: 'color-focus', name: '专注色彩', icon: '🎨',
+        id: 'color-focus', name: '专注色彩', icon: '/assets/games/color-focus.png',
         primaryLabel: '最高分', primaryValue: String(bestCf),
         secondaryLabel: '最高正确率', secondaryValue: fmtAccuracy(accuracy),
       })
     }
     if (bestDt != null) {
       views.push({
-        id: 'direction-trap', name: '方向陷阱', icon: '🧭',
+        id: 'direction-trap', name: '方向陷阱', icon: '/assets/games/direction-trap.png',
         primaryLabel: '最高分', primaryValue: String(bestDt),
         secondaryLabel: '最高连对', secondaryValue: sDt?.maxStreak != null ? String(sDt.maxStreak) : '',
       })
     }
     if (finalTime != null) {
       views.push({
-        id: 'color-hunter', name: '颜色猎手', icon: '🔍',
+        id: 'color-hunter', name: '颜色猎手', icon: '/assets/games/color-hunter.png',
         primaryLabel: '最佳成绩', primaryValue: fmtSeconds(finalTime),
         secondaryLabel: '最少错误', secondaryValue: sCh?.lowestErrorCount != null ? String(sCh.lowestErrorCount) : '',
       })
@@ -161,7 +161,7 @@ Page({
     const releasedFb = sFb?.bestReleasedFish ?? local['fish-breakout']?.releasedFish
     if (bestFb != null) {
       views.push({
-        id: 'fish-breakout', name: '鱼群突围', icon: '🐟',
+        id: 'fish-breakout', name: '鱼群突围', icon: '/assets/games/fish-breakout.png',
         primaryLabel: '最高清空', primaryValue: `${bestFb} 池`,
         secondaryLabel: '放生', secondaryValue: releasedFb != null ? `${releasedFb} 条` : '',
       })

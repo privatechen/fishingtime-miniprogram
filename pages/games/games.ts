@@ -3,16 +3,18 @@ interface GameItem {
   name: string
   desc: string
   icon: string
+  /** 封面图路径（有则用图，无则用 emoji） */
+  cover?: string
   /** 可玩游戏的路由；未开发为 undefined */
   path?: string
 }
 
 const GAMES: GameItem[] = [
-  { id: 'color-focus', name: '专注色彩', desc: '30 秒专注力挑战', icon: '🎨', path: '/pages/games/color-focus/color-focus' },
-  { id: '2048', name: '2048', desc: '合并数字挑战高分', icon: '🎯', path: '/pages/games/2048/game2048' },
-  { id: 'direction-trap', name: '方向陷阱', desc: '30 秒反应挑战', icon: '🧭', path: '/pages/games/direction-trap/direction-trap' },
-  { id: 'color-hunter', name: '颜色猎手', desc: '找出所有目标颜色', icon: '🔍', path: '/pages/games/color-hunter/color-hunter' },
-  { id: 'fish-breakout', name: '鱼群突围', desc: '30 秒连续清空鱼池', icon: '🐟', path: '/pages/games/fish-breakout/fish-breakout' },
+  { id: 'color-focus', name: '专注色彩', desc: '30 秒专注力挑战', icon: '🎨', cover: '/assets/games/color-focus.png', path: '/pages/games/color-focus/color-focus' },
+  { id: '2048', name: '2048', desc: '合并数字挑战高分', icon: '🎯', cover: '/assets/games/2048.png', path: '/pages/games/2048/game2048' },
+  { id: 'direction-trap', name: '方向陷阱', desc: '30 秒反应挑战', icon: '🧭', cover: '/assets/games/direction-trap.png', path: '/pages/games/direction-trap/direction-trap' },
+  { id: 'color-hunter', name: '颜色猎手', desc: '找出所有目标颜色', icon: '🔍', cover: '/assets/games/color-hunter.png', path: '/pages/games/color-hunter/color-hunter' },
+  { id: 'fish-breakout', name: '鱼群突围', desc: '30 秒连续清空鱼池', icon: '🐟', cover: '/assets/games/fish-breakout.png', path: '/pages/games/fish-breakout/fish-breakout' },
 ]
 
 Page({
