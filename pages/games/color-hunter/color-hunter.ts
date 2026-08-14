@@ -4,7 +4,7 @@ import {
   type HunterColor,
   type HunterResult,
 } from './engine/ColorHunterEngine'
-import { get, post } from '../../../utils/request'
+import { post } from '../../../utils/request'
 import { ensureLogin } from '../../../utils/auth'
 
 type ViewState = 'intro' | 'playing' | 'result'
@@ -64,8 +64,6 @@ Page({
     localBestText: '',
 
     showRanking: false,
-    rankingLoading: false,
-    rankingList: [] as { rank: number; nickname: string; timeText: string }[],
     saving: false,
     showUsernameDialog: false,
   },
@@ -267,24 +265,8 @@ Page({
   },
 
   /** 查看排行榜（复用后端 color-hunter rank，按总时间升序） */
-  async onOpenRanking() {
-    this.setData({ showRanking: true, rankingLoading: true })
-    try {
-      const res = await get<{ rank: number; nickname: string; bestFinalTime: number }[]>(
-        '/api/games/color-hunter/rank',
-      )
-      this.setData({
-        rankingList: (res.data || []).map((r) => ({
-          rank: r.rank,
-          nickname: r.nickname,
-          timeText: `${(r.bestFinalTime / 1000).toFixed(2)}s`,
-        })),
-        rankingLoading: false,
-      })
-    } catch {
-      this.setData({ rankingList: [], rankingLoading: false })
-      wx.showToast({ title: '排行榜加载失败', icon: 'none' })
-    }
+    onOpenRanking() {
+    this.setData({ showRanking: true })
   },
 
   onCloseRanking() {

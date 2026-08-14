@@ -1,5 +1,5 @@
 import { Game2048Engine, type Direction, type BoardTile } from './engine/Game2048Engine'
-import { get, post } from '../../../utils/request'
+import { post } from '../../../utils/request'
 import { ensureLogin } from '../../../utils/auth'
 
 /** 本地存档 key（语义与 Web 版一致） */
@@ -41,8 +41,6 @@ Page({
     showRestart: false,
     showResult: false,
     showRanking: false,
-    rankingLoading: false,
-    rankingList: [] as { rank: number; nickname: string; bestScore: number }[],
     saving: false,
     moveFail: false,
     showUsernameDialog: false,
@@ -274,15 +272,8 @@ Page({
   },
 
   /** 查看排行榜（复用后端 rank，Top20 分数降序） */
-  async onOpenRanking() {
-    this.setData({ showRanking: true, rankingLoading: true })
-    try {
-      const res = await get<{ rank: number; nickname: string; bestScore: number }[]>('/api/games/2048/rank')
-      this.setData({ rankingList: res.data || [], rankingLoading: false })
-    } catch {
-      this.setData({ rankingList: [], rankingLoading: false })
-      wx.showToast({ title: '排行榜加载失败', icon: 'none' })
-    }
+    onOpenRanking() {
+    this.setData({ showRanking: true })
   },
   onCloseRanking() {
     this.setData({ showRanking: false })

@@ -41,6 +41,18 @@
 .btn-start::after {
   border: none;
 }
+.btn-rank {
+  margin-top: 16rpx;
+  width: 100%;
+  padding: 10rpx;
+  background: #f2f3f5;
+  color: #4e5969;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+}
+.btn-rank::after {
+  border: none;
+}
 
 /* 游戏中 */
 .play-area {

@@ -1,6 +1,6 @@
 import { ExtremeFishingEngine } from './engine/ExtremeFishingEngine'
 import type { ExtremeFishingConfig, GameResult, Selection } from './engine/types'
-import { get, post } from '../../../utils/request'
+import { post } from '../../../utils/request'
 import { ensureLogin } from '../../../utils/auth'
 
 type ViewState = 'intro' | 'playing' | 'result'
@@ -69,8 +69,6 @@ Page({
     localBestText: '',
     feedback: null as { text: string; kind: 'ok' | 'perfect' | 'bad' } | null,
     showRanking: false,
-    rankingLoading: false,
-    rankingList: [] as { rank: number; nickname: string; scoreText: string }[],
     saving: false,
     showUsernameDialog: false,
   },
@@ -267,32 +265,14 @@ Page({
     wx.navigateBack()
   },
 
-  /** 查看排行榜（清空池数版复用，这里按总分） */
-  async onOpenRanking() {
-    this.setData({ showRanking: true, rankingLoading: true })
-    try {
-      const res = await get<{ rank: number; nickname: string; score: number }[]>(
-        '/api/games/extreme-fishing/rank',
-      )
-      this.setData({
-        rankingList: (res.data || []).map((r) => ({
-          rank: r.rank,
-          nickname: r.nickname,
-          scoreText: `${r.score} 分`,
-        })),
-        rankingLoading: false,
-      })
-    } catch {
-      this.setData({ rankingList: [], rankingLoading: false })
-      wx.showToast({ title: '排行榜加载失败', icon: 'none' })
-    }
+  /** 打开排行榜（今日/总 Tab 由公共弹层处理） */
+  onOpenRanking() {
+    this.setData({ showRanking: true })
   },
 
   onCloseRanking() {
     this.setData({ showRanking: false })
   },
-
-  noop() {},
 
   /** 保存成绩：先玩后登录 */
   async onSaveScore() {

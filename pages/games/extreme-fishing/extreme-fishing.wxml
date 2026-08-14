@@ -7,6 +7,7 @@
     <view class="rule-item">河豚失误 3 次，本局结束。</view>
     <view wx:if="{{localBestText}}" class="intro-best">最佳纪录：{{localBestText}}</view>
     <button class="btn-start" bindtap="startGame">开始游戏</button>
+    <button class="btn-rank" bindtap="onOpenRanking">排行榜</button>
   </view>
 
   <!-- 游戏中 -->
@@ -69,22 +70,14 @@
     </view>
   </view>
 
-  <!-- 排行榜弹层 -->
-  <view wx:if="{{showRanking}}" class="rank-mask" bindtap="onCloseRanking">
-    <view class="rank-sheet" catchtap="noop">
-      <view class="rank-title">排行榜 Top20（总分）</view>
-      <view wx:if="{{rankingLoading}}" class="rank-state">加载中...</view>
-      <view wx:elif="{{rankingList.length === 0}}" class="rank-state">暂无排行数据，快去挑战吧</view>
-      <scroll-view wx:else scroll-y class="rank-list">
-        <view wx:for="{{rankingList}}" wx:key="rank" class="rank-item">
-          <text class="rank-no {{item.rank <= 3 ? 'rank-top' : ''}}">{{item.rank}}</text>
-          <text class="rank-name">{{item.nickname}}</text>
-          <text class="rank-score">{{item.scoreText}}</text>
-        </view>
-      </scroll-view>
-      <view class="rank-close" bindtap="onCloseRanking">关闭</view>
-    </view>
-  </view>
+  <!-- 排行榜弹层（公共组件：今日/总 Tab + 我的排名） -->
+  <leaderboard-sheet
+    visible="{{showRanking}}"
+    game-code="extreme-fishing"
+    game-name="极限捞鱼"
+    score-type="number"
+    bind:close="onCloseRanking"
+  />
 
   <!-- 设置用户名弹层（首次保存成绩时） -->
   <username-dialog

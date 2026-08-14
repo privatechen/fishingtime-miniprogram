@@ -1,0 +1,39 @@
+<view wx:if="{{visible}}" class="rank-mask" bindtap="onClose">
+  <view class="rank-sheet" catchtap="noop">
+    <view class="rank-header">
+      <view class="rank-title">{{gameName}}排行榜</view>
+      <view class="rank-close" bindtap="onClose">✕</view>
+    </view>
+
+    <view class="rank-tabs">
+      <view class="rank-tab {{period === 'TODAY' ? 'active' : ''}}" data-period="TODAY" bindtap="onPeriodTap">今日排名</view>
+      <view class="rank-tab {{period === 'ALL' ? 'active' : ''}}" data-period="ALL" bindtap="onPeriodTap">总排名</view>
+    </view>
+
+    <view wx:if="{{error}}" class="rank-state">
+      <text>加载失败</text>
+      <view class="retry" bindtap="onRetry">点击重试</view>
+    </view>
+    <view wx:elif="{{loading && items.length === 0}}" class="rank-state">加载中...</view>
+    <view wx:elif="{{items.length === 0}}" class="rank-state">
+      {{period === 'TODAY' ? '今天还没有排名，完成第一局即可上榜' : '暂无排名，快去挑战吧'}}
+    </view>
+
+    <scroll-view wx:else scroll-y class="rank-list" bindscrolltolower="onScrollBottom">
+      <view wx:for="{{items}}" wx:key="rank" class="rank-item {{item.me ? 'me' : ''}}">
+        <text class="rank-no {{item.rank <= 3 ? 'rank-top' : ''}}">{{item.rank}}</text>
+        <text class="rank-name">{{item.nickname}}</text>
+        <text class="rank-score">{{formatScore(item.score)}}</text>
+      </view>
+      <view wx:if="{{loadingMore}}" class="rank-more">加载更多...</view>
+    </scroll-view>
+
+    <view class="my-rank">
+      <text class="my-label">我的排名</text>
+      <text wx:if="{{myRank}}" class="my-value">
+        第{{myRank.rank}}名 · {{formatScore(myRank.score)}}{{formatSecondary(myRank.secondaryScore)}}
+      </text>
+      <text wx:else class="my-value">暂无排名</text>
+    </view>
+  </view>
+</view>

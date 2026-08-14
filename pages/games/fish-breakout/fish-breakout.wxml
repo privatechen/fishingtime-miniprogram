@@ -7,6 +7,7 @@
     <view class="rule-item">③ 30 秒挑战，失误 3 次提前结束。</view>
     <view wx:if="{{localBestText}}" class="intro-best">历史最佳：{{localBestText}}</view>
     <button class="btn-start" bindtap="startGame">开始游戏</button>
+    <button class="btn-rank" bindtap="onOpenRanking">排行榜</button>
   </view>
 
   <!-- 3、2、1 倒计时 -->
@@ -71,22 +72,14 @@
     </view>
   </view>
 
-  <!-- 排行榜弹层 -->
-  <view wx:if="{{showRanking}}" class="rank-mask" bindtap="onCloseRanking">
-    <view class="rank-sheet" catchtap="noop">
-      <view class="rank-title">排行榜 Top20（清空池数）</view>
-      <view wx:if="{{rankingLoading}}" class="rank-state">加载中...</view>
-      <view wx:elif="{{rankingList.length === 0}}" class="rank-state">暂无排行数据，快去挑战吧</view>
-      <scroll-view wx:else scroll-y class="rank-list">
-        <view wx:for="{{rankingList}}" wx:key="rank" class="rank-item">
-          <text class="rank-no {{item.rank <= 3 ? 'rank-top' : ''}}">{{item.rank}}</text>
-          <text class="rank-name">{{item.nickname}}</text>
-          <text class="rank-score">{{item.poolsText}}</text>
-        </view>
-      </scroll-view>
-      <view class="rank-close" bindtap="onCloseRanking">关闭</view>
-    </view>
-  </view>
+    <!-- 排行榜弹层（公共组件：今日/总 Tab + 我的排名） -->
+  <leaderboard-sheet
+    visible="{{showRanking}}"
+    game-code="fish-breakout"
+    game-name="鱼群突围"
+    score-type="pools"
+    bind:close="onCloseRanking"
+  />
 
   <!-- 设置用户名弹层（首次保存成绩时） -->
   <username-dialog

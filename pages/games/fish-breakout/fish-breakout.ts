@@ -1,6 +1,6 @@
 import { FishGameEngine } from './engine/FishGameEngine'
 import type { DifficultySpec, PoolResult } from './engine/types'
-import { get, post } from '../../../utils/request'
+import { post } from '../../../utils/request'
 import { ensureLogin } from '../../../utils/auth'
 
 type ViewState = 'intro' | 'countdown' | 'playing' | 'result'
@@ -73,8 +73,6 @@ Page({
     isNewBest: false,
     localBestText: '',
     showRanking: false,
-    rankingLoading: false,
-    rankingList: [] as { rank: number; nickname: string; poolsText: string }[],
     saving: false,
     showUsernameDialog: false,
   },
@@ -294,24 +292,8 @@ Page({
   },
 
   /** 查看排行榜（复用后端 fish-breakout rank，清空池数排序） */
-  async onOpenRanking() {
-    this.setData({ showRanking: true, rankingLoading: true })
-    try {
-      const res = await get<{ rank: number; nickname: string; clearedPools: number }[]>(
-        '/api/games/fish-breakout/rank',
-      )
-      this.setData({
-        rankingList: (res.data || []).map((r) => ({
-          rank: r.rank,
-          nickname: r.nickname,
-          poolsText: `${r.clearedPools} 池`,
-        })),
-        rankingLoading: false,
-      })
-    } catch {
-      this.setData({ rankingList: [], rankingLoading: false })
-      wx.showToast({ title: '排行榜加载失败', icon: 'none' })
-    }
+    onOpenRanking() {
+    this.setData({ showRanking: true })
   },
 
   onCloseRanking() {
