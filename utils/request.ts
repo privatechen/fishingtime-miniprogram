@@ -50,7 +50,7 @@ function buildHeader(): Record<string, string> {
 /** 统一请求：401 时自动刷新登录态并重试一次（防死循环） */
 function request<T>(
   url: string,
-  options: { method?: 'GET' | 'POST'; data?: object },
+  options: { method?: 'GET' | 'POST' | 'PUT'; data?: object },
   allowRetry: boolean,
 ): Promise<ApiResponse<T>> {
   return new Promise((resolve, reject) => {
@@ -109,4 +109,9 @@ export function get<T>(url: string): Promise<ApiResponse<T>> {
 /** 统一 POST 请求（JSON body） */
 export function post<T>(url: string, data: object): Promise<ApiResponse<T>> {
   return request<T>(url, { method: 'POST', data }, true)
+}
+
+/** 统一 PUT 请求（JSON body） */
+export function put<T>(url: string, data: object): Promise<ApiResponse<T>> {
+  return request<T>(url, { method: 'PUT', data }, true)
 }

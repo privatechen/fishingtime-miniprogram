@@ -191,3 +191,84 @@
   background: #2d8cf0;
   color: #fff;
 }
+
+
+/* ── 修改用户名 ── */
+.edit-username-btn {
+  background: #f2f3f5;
+  color: #2d8cf0;
+  font-size: 24rpx;
+  border-radius: 32rpx;
+  padding: 10rpx 22rpx;
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+.edit-username-btn::after {
+  border: none;
+}
+.edit-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.edit-sheet {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  width: 560rpx;
+  max-width: 85%;
+  text-align: center;
+}
+.edit-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}
+.edit-tip {
+  font-size: 24rpx;
+  color: #86909c;
+  margin-bottom: 20rpx;
+}
+.edit-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16rpx 20rpx;
+  border: 1rpx solid #e5e6eb;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+}
+.edit-error {
+  color: #e74c3c;
+  font-size: 24rpx;
+  margin-top: 12rpx;
+}
+.edit-actions {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+.edit-btn {
+  flex: 1;
+  padding: 18rpx 0;
+  border-radius: 32rpx;
+  font-size: 30rpx;
+  line-height: 1.4;
+}
+.edit-btn::after {
+  border: none;
+}
+.edit-cancel {
+  background: #f2f3f5;
+  color: #86909c;
+}
+.edit-submit {
+  background: #2d8cf0;
+  color: #fff;
+}

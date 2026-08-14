@@ -11,6 +11,11 @@
       loading="{{loggingIn}}"
       bindtap="onSaveRecord"
     >登录/注册</button>
+    <button
+      wx:elif="{{loggedIn}}"
+      class="edit-username-btn"
+      bindtap="onEditUsername"
+    >修改用户名</button>
   </view>
 
   <!-- 我的游戏 -->
@@ -65,4 +70,24 @@
     bind:confirmed="onUsernameConfirmed"
     bind:close="onUsernameClose"
   />
+
+  <!-- 修改用户名弹层 -->
+  <view wx:if="{{showUsernameEdit}}" class="edit-mask" bindtap="onEditUsernameClose">
+    <view class="edit-sheet" catchtap="noop">
+      <view class="edit-title">修改用户名</view>
+      <view class="edit-tip">修改后昵称将同步为新用户名</view>
+      <input
+        class="edit-input"
+        value="{{editUsername}}"
+        maxlength="32"
+        placeholder="请输入新用户名（3~32 个字符）"
+        bindinput="onEditUsernameInput"
+      />
+      <view wx:if="{{editError}}" class="edit-error">{{editError}}</view>
+      <view class="edit-actions">
+        <button class="edit-btn edit-cancel" bindtap="onEditUsernameClose">取消</button>
+        <button class="edit-btn edit-submit" loading="{{editSubmitting}}" disabled="{{editSubmitting}}" bindtap="onEditUsernameSubmit">确认</button>
+      </view>
+    </view>
+  </view>
 </view>

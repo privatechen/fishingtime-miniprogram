@@ -23,15 +23,13 @@
       <view wx:for="{{items}}" wx:key="rank" class="rank-item {{item.me ? 'me' : ''}}">
         <text class="rank-no {{item.rank <= 3 ? 'rank-top' : ''}}">{{item.rank}}</text>
         <text class="rank-name">{{item.nickname}}</text>
-        <text class="rank-score">{{formatScore(item.score)}}</text>
+        <text class="rank-score">{{item.scoreDisplay}}{{item.secondaryDisplay}}</text>
       </view>
     </scroll-view>
 
     <view class="my-rank">
       <text class="my-label">我的排名</text>
-      <text wx:if="{{myRank}}" class="my-value">
-        第{{myRank.rank}}名 · {{formatScore(myRank.score)}}{{formatSecondary(myRank.secondaryScore)}}
-      </text>
+      <text wx:if="{{myRankText}}" class="my-value">{{myRankText}}</text>
       <text wx:else class="my-value">暂无排名</text>
     </view>
   </view>

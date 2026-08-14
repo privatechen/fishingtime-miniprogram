@@ -1,12 +1,15 @@
 import { get } from '../../utils/request'
 
-/** 排行榜条目（后端 LeaderboardDTO.Item） */
+/** 排行榜条目（后端 LeaderboardDTO.Item + 前端预计算展示文本） */
 interface RankItem {
   rank: number
   nickname: string
   score: number
   secondaryScore: number | null
   me: boolean
+  /** 按 scoreType 格式化后的成绩展示（模板不调方法，load 时预计算） */
+  scoreDisplay: string
+  secondaryDisplay: string
 }
 
 /** 我的排名（后端 LeaderboardDTO.MyRank） */
@@ -36,6 +39,7 @@ Component({
     period: 'TODAY',
     items: [] as RankItem[],
     myRank: null as MyRank | null,
+    myRankText: '',
     total: 0,
     loading: false,
     error: false,
@@ -52,7 +56,7 @@ Component({
 
   methods: {
     reset() {
-      this.setData({ period: 'TODAY', items: [], myRank: null, total: 0, error: false })
+      this.setData({ period: 'TODAY', items: [], myRank: null, myRankText: '', total: 0, error: false })
     },
 
     onPeriodTap(e: WechatMiniprogram.TouchEvent) {
@@ -76,7 +80,17 @@ Component({
         )
         if (res.code === 200 && res.data) {
           const d = res.data
-          this.setData({ items: d.items || [], myRank: d.myRank || null, total: d.total || 0 })
+          // 模板不调方法，预计算成绩展示文本
+          const items: RankItem[] = (d.items || []).map((it) => ({
+            ...it,
+            scoreDisplay: this.formatScore(it.score),
+            secondaryDisplay: this.formatSecondary(it.secondaryScore),
+          }))
+          const mr = d.myRank
+          const myRankText = mr
+            ? `第${mr.rank}名 · ${this.formatScore(mr.score)}${this.formatSecondary(mr.secondaryScore)}`
+            : ''
+          this.setData({ items, myRank: mr || null, myRankText, total: d.total || 0 })
         } else {
           this.setData({ error: true })
         }

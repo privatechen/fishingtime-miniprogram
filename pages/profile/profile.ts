@@ -1,4 +1,4 @@
-import { get, post, getToken, getUser } from '../../utils/request'
+import { get, post, put, getToken, getUser, setUser } from '../../utils/request'
 import { ensureLogin } from '../../utils/auth'
 
 /** 后端我的成绩（GameRecordDTO） */
@@ -65,6 +65,10 @@ Page({
     feedbackContent: '',
     feedbackSubmitting: false,
     showUsernameDialog: false,
+    showUsernameEdit: false,
+    editUsername: '',
+    editError: '',
+    editSubmitting: false,
   },
 
   onShow() {
@@ -298,4 +302,50 @@ Page({
       this.setData({ feedbackSubmitting: false })
     }
   },
+
+  /** 打开修改用户名弹层 */
+  onEditUsername() {
+    const user = getUser()
+    this.setData({ showUsernameEdit: true, editUsername: user?.username || '', editError: '' })
+  },
+
+  onEditUsernameInput(e: WechatMiniprogram.Input) {
+    this.setData({ editUsername: e.detail.value, editError: '' })
+  },
+
+  onEditUsernameClose() {
+    if (this.data.editSubmitting) return
+    this.setData({ showUsernameEdit: false })
+  },
+
+  /** 提交修改用户名（方案A：昵称同步为新用户名） */
+  async onEditUsernameSubmit() {
+    const name = this.data.editUsername.trim()
+    if (name.length < 3 || name.length > 32) {
+      this.setData({ editError: '用户名需 3~32 个字符' })
+      return
+    }
+    if (this.data.editSubmitting) return
+    this.setData({ editSubmitting: true })
+    try {
+      const res = await put<{ id: number; username: string; nickname: string }>('/api/users/me', {
+        username: name,
+        nickname: name,
+      })
+      if (res.code === 200 && res.data) {
+        setUser({ id: res.data.id, username: res.data.username, nickname: res.data.nickname })
+        this.setData({ showUsernameEdit: false, editUsername: '', nickname: res.data.nickname })
+        wx.showToast({ title: '用户名已更新', icon: 'success' })
+      } else {
+        this.setData({ editError: res.message || '修改失败' })
+      }
+    } catch {
+      this.setData({ editError: '网络异常，请重试' })
+    } finally {
+      this.setData({ editSubmitting: false })
+    }
+  },
+
+  /** 空操作：弹层 catchtap 阻止冒泡 */
+  noop() {},
 })
