@@ -19,13 +19,12 @@
       {{period === 'TODAY' ? '今天还没有排名，完成第一局即可上榜' : '暂无排名，快去挑战吧'}}
     </view>
 
-    <scroll-view wx:else scroll-y class="rank-list" bindscrolltolower="onScrollBottom">
+    <scroll-view wx:else scroll-y class="rank-list">
       <view wx:for="{{items}}" wx:key="rank" class="rank-item {{item.me ? 'me' : ''}}">
         <text class="rank-no {{item.rank <= 3 ? 'rank-top' : ''}}">{{item.rank}}</text>
         <text class="rank-name">{{item.nickname}}</text>
         <text class="rank-score">{{formatScore(item.score)}}</text>
       </view>
-      <view wx:if="{{loadingMore}}" class="rank-more">加载更多...</view>
     </scroll-view>
 
     <view class="my-rank">

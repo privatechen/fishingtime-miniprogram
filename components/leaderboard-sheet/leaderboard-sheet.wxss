@@ -68,7 +68,7 @@
 
 .rank-list {
   flex: 1;
-  min-height: 0;
+  height: 0;
 }
 .rank-item {
   display: flex;
@@ -101,12 +101,6 @@
   font-size: 28rpx;
   font-weight: 600;
   color: #2d8cf0;
-}
-.rank-more {
-  text-align: center;
-  color: #c9cdd4;
-  font-size: 24rpx;
-  padding: 16rpx 0;
 }
 
 .my-rank {

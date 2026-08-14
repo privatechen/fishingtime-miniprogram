@@ -37,9 +37,7 @@ Component({
     items: [] as RankItem[],
     myRank: null as MyRank | null,
     total: 0,
-    page: 1,
     loading: false,
-    loadingMore: false,
     error: false,
   },
 
@@ -54,13 +52,13 @@ Component({
 
   methods: {
     reset() {
-      this.setData({ period: 'TODAY', items: [], myRank: null, total: 0, page: 1, error: false, loadingMore: false })
+      this.setData({ period: 'TODAY', items: [], myRank: null, total: 0, error: false })
     },
 
     onPeriodTap(e: WechatMiniprogram.TouchEvent) {
       const p = e.currentTarget.dataset.period as string
       if (p === this.data.period) return
-      this.setData({ period: p, items: [], page: 1, error: false, loadingMore: false })
+      this.setData({ period: p, items: [], error: false })
       this.load()
     },
 
@@ -74,27 +72,19 @@ Component({
           myRank: MyRank | null
           total: number
         }>(
-          `/api/games/${this.data.gameCode}/leaderboard?period=${this.data.period}&page=${this.data.page}&pageSize=${PAGE_SIZE}`,
+          `/api/games/${this.data.gameCode}/leaderboard?period=${this.data.period}&page=1&pageSize=${PAGE_SIZE}`,
         )
         if (res.code === 200 && res.data) {
           const d = res.data
-          const items = this.data.page === 1 ? d.items || [] : this.data.items.concat(d.items || [])
-          this.setData({ items, myRank: d.myRank || null, total: d.total || 0 })
+          this.setData({ items: d.items || [], myRank: d.myRank || null, total: d.total || 0 })
         } else {
           this.setData({ error: true })
         }
       } catch {
         this.setData({ error: true })
       } finally {
-        this.setData({ loading: false, loadingMore: false })
+        this.setData({ loading: false })
       }
-    },
-
-    onScrollBottom() {
-      const { items, total, page, loadingMore } = this.data
-      if (loadingMore || items.length >= total) return
-      this.setData({ page: page + 1, loadingMore: true })
-      this.load()
     },
 
     /** 成绩展示：number=原样；seconds=毫秒转秒；pools=清空池数 */
