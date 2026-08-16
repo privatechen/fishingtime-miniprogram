@@ -22,7 +22,7 @@ Page({
     /** swiper 当前索引（与 activePlatform 联动） */
     current: 0,
     activePlatform: 'weibo',
-    /** 共同热点（Top 2；为空时模块隐藏） */
+    /** 共同热点（最多 Top 4；为空时模块隐藏） */
     commonHotspots: [] as CommonHotView[],
     /** 各平台热榜缓存：platform → list（swiper-item 各自渲染） */
     platformCache: {} as Record<string, HotItem[]>,
@@ -44,11 +44,11 @@ Page({
     this.loadPlatform('weibo')
   },
 
-  /** 加载全网共同热点（Top 2；失败或为空时隐藏模块） */
+  /** 加载全网共同热点（最多 Top 4；失败或为空时隐藏模块） */
   async loadCommonHot() {
     try {
       const res = await get<CommonHotCluster[]>('/api/hot/similar/clusters')
-      const hotspots = (res.data || []).slice(0, 2).map((cluster) => this.toCommonHotView(cluster))
+      const hotspots = (res.data || []).slice(0, 4).map((cluster) => this.toCommonHotView(cluster))
       this.setData({ commonHotspots: hotspots })
     } catch {
       this.setData({ commonHotspots: [] })

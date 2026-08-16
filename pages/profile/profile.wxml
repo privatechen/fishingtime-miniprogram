@@ -81,6 +81,7 @@
         value="{{editUsername}}"
         maxlength="32"
         placeholder="请输入新用户名（3~32 个字符）"
+        placeholder-class="edit-placeholder"
         bindinput="onEditUsernameInput"
       />
       <view wx:if="{{editError}}" class="edit-error">{{editError}}</view>

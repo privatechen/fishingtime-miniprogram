@@ -303,10 +303,9 @@ Page({
     }
   },
 
-  /** 打开修改用户名弹层 */
+  /** 打开修改用户名弹层（输入框留空便于输入新名） */
   onEditUsername() {
-    const user = getUser()
-    this.setData({ showUsernameEdit: true, editUsername: user?.username || '', editError: '' })
+    this.setData({ showUsernameEdit: true, editUsername: '', editError: '' })
   },
 
   onEditUsernameInput(e: WechatMiniprogram.Input) {
