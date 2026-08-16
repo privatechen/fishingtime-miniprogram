@@ -8,6 +8,7 @@
     "pages/games/fish-breakout/fish-breakout",
     "pages/games/extreme-fishing/extreme-fishing",
     "pages/games/2048/game2048",
+    "pages/games/detail/detail",
     "pages/profile/profile",
     "pages/webview/webview"
   ],

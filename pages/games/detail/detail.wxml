@@ -1,0 +1,171 @@
+<view class="page">
+  <!-- ─────── 开始页 ─────── -->
+  <view wx:if="{{view === 'intro'}}" class="card intro-card">
+    <view class="intro-title">细节</view>
+    <view class="intro-subtitle">看 10 秒，记住每一个细节</view>
+    <view class="rule-item"><text class="rule-label">看图</text><text>每张图观察 10 秒</text></view>
+    <view class="rule-item"><text class="rule-label">抽题</text><text>图片消失后盲选题号（1~6）</text></view>
+    <view class="rule-item"><text class="rule-label">作答</text><text>四选一，每题限时 8 秒</text></view>
+    <view class="intro-duration">共 5 轮 · 中途可随时结束并保存</view>
+    <view wx:if="{{localBest > 0}}" class="intro-best">本地最佳：答对 {{localBest}} 题</view>
+    <button class="btn-start" loading="{{submitting}}" disabled="{{submitting}}" bindtap="startGame">开始游戏</button>
+    <button class="btn-rank" bindtap="onOpenRanking">查看排行榜</button>
+    <view wx:if="{{errorText}}" class="error-text">{{errorText}}</view>
+  </view>
+
+  <!-- ─────── 游戏中（观察/盲选/作答/结果/回看/结算） ─────── -->
+  <block wx:else>
+    <!-- 实时成绩条 -->
+    <view wx:if="{{view !== 'finished'}}" class="live-strip">
+      <text>已答对 <text class="num">{{correctNow}}</text> 题</text>
+      <text class="dot">·</text>
+      <text>累计用时 <text class="num">{{liveElapsedText}}</text>s</text>
+    </view>
+
+    <!-- 顶部栏 -->
+    <view class="topbar">
+      <view class="top-btn" bindtap="onQuit">← 返回</view>
+      <view class="game-name">{{view === 'review' ? '回看' : ''}}第 {{roundNum}}/5 轮</view>
+      <view class="timer {{view === 'answering' ? (remainingSeconds <= 3 && remainingSeconds > 0 ? 'timer-hurry' : '') : ''}}">
+        {{view === 'answering' ? remainingSeconds + 's' : ''}}
+      </view>
+    </view>
+
+    <!-- 观察：大图 + 叠加倒计时 -->
+    <view wx:if="{{view === 'observing'}}" class="observe-area">
+      <view class="observe-tip">仔细观察，记住细节，题目稍后揭晓</view>
+      <view class="image-wrap">
+        <image wx:if="{{imageUrl}}" class="detail-image" src="{{imageUrl}}" mode="aspectFit" bindload="onImageLoad" binderror="onImageError" />
+        <view wx:if="{{!imageReady && !imageError}}" class="image-state">图片加载中...</view>
+        <view wx:if="{{imageError}}" class="image-state">
+          <view>图片加载失败</view>
+          <button class="retry-btn" bindtap="retryImage">重试</button>
+        </view>
+      </view>
+      <!-- 观察倒计时：图片正下方，小号展示 -->
+      <view wx:if="{{imageReady}}" class="countdown-bar">
+        <text class="countdown-num {{remainingSeconds <= 3 && remainingSeconds > 0 ? 'hurry' : ''}}">{{remainingSeconds}}</text>
+        <text class="countdown-label">秒后图片隐藏</text>
+      </view>
+    </view>
+
+    <!-- 盲选题号：6 张号卡 -->
+    <view wx:elif="{{view === 'drawing'}}" class="drawing-area">
+      <view class="drawing-tip">图片已隐藏，选一个题号</view>
+      <view class="number-grid">
+        <view
+          wx:for="{{[1, 2, 3, 4, 5, 6]}}"
+          wx:key="*this"
+          class="number-card"
+          data-number="{{item}}"
+          bindtap="onPickNumber"
+        >{{item}}</view>
+      </view>
+      <view wx:if="{{errorText}}" class="error-text">{{errorText}}</view>
+    </view>
+
+    <!-- 作答：问题 + 4 选项 + 倒计时 -->
+    <view wx:elif="{{view === 'answering' && question}}" class="answer-area">
+      <view class="question-text">{{question.questionText}}</view>
+      <view class="options">
+        <view
+          wx:for="{{question.options}}"
+          wx:key="index"
+          class="option-btn"
+          data-key="{{question.optionKeys[index]}}"
+          bindtap="onChooseOption"
+        >{{item}}</view>
+      </view>
+      <view wx:if="{{errorText}}" class="error-text">{{errorText}}</view>
+    </view>
+
+    <!-- 结果 -->
+    <view wx:elif="{{view === 'result' && answer}}" class="card result-card">
+      <view class="result-title {{answer.correct ? 'ok' : 'bad'}}">{{answer.correct ? '答对啦' : '答错了'}}</view>
+      <view class="result-line">正确答案：{{answer.correctAnswer}}</view>
+      <view class="result-line">本题用时：{{elapsedText}}s</view>
+      <view class="result-now">目前答对 {{correctNow}} 题</view>
+      <view class="result-actions">
+        <button class="result-btn secondary" bindtap="goReview">回看图片</button>
+        <button class="result-btn primary" bindtap="goNext">{{roundNum < 5 ? '下一张' : '查看结算'}}</button>
+      </view>
+    </view>
+
+    <!-- 回看 -->
+    <view wx:elif="{{view === 'review'}}" class="observe-area">
+      <view class="image-wrap">
+        <image wx:if="{{imageUrl}}" class="detail-image" src="{{imageUrl}}" mode="aspectFit" />
+      </view>
+      <view class="review-bar">
+        <view wx:if="{{answer}}" class="review-answer {{answer.correct ? 'ok' : 'bad'}}">正确答案：{{answer.correctAnswer}}</view>
+        <button class="result-btn primary review-btn" bindtap="goNext">{{roundNum < 5 ? '下一张' : '查看结算'}}</button>
+      </view>
+    </view>
+
+    <!-- 结算 -->
+    <view wx:elif="{{view === 'finished' && result}}" class="card result-card finish-card">
+      <view class="result-title">结算</view>
+      <view class="finish-score">{{result.correctCount}}<text class="finish-total">/{{result.answeredCount}}</text></view>
+      <view class="result-line">答对 {{result.correctCount}} · 作答 {{result.answeredCount}} 题</view>
+      <view class="result-line">累计答题用时：{{answerTimeText}}s</view>
+
+      <!-- 每轮明细 -->
+      <view class="round-detail">
+        <view class="round-detail-title">每轮明细</view>
+        <view wx:for="{{roundRows}}" wx:key="round" class="round-row {{item.markClass}}">
+          <text class="round-no">第 {{item.round}} 轮</text>
+          <text class="round-mark">{{item.label}}</text>
+          <text class="round-time">{{item.timeText}}</text>
+        </view>
+      </view>
+      <view class="score-note">答对记 1 题，答错/超时不加；先比答对数，相同再比累计用时</view>
+
+      <!-- 已保存：排名 / 未保存：提示 -->
+      <view wx:if="{{result.saved}}" class="finish-ranks">
+        <view wx:if="{{result.todayRank != null}}" class="rank-chip">今日排名 第 {{result.todayRank}} 名</view>
+        <view wx:if="{{result.allRank != null}}" class="rank-chip">总排名 第 {{result.allRank}} 名</view>
+        <view wx:if="{{result.bestCorrectCount != null}}" class="best-line">历史最佳：{{result.bestCorrectCount}}/5 · {{bestTimeText}}s</view>
+      </view>
+      <view wx:else class="save-tip">成绩未保存，登录后可参与排行</view>
+
+      <button wx:if="{{!result.saved}}" class="result-btn primary save-btn" loading="{{saving}}" disabled="{{saving}}" bindtap="onSaveScore">保存成绩</button>
+      <view class="result-actions">
+        <button class="result-btn secondary" bindtap="onOpenRanking">排行榜</button>
+        <button class="result-btn primary" bindtap="startGame">再来一局</button>
+      </view>
+      <button class="result-btn link" bindtap="backToGames">返回游戏厅</button>
+    </view>
+  </block>
+
+  <!-- 底部「结束并保存」 -->
+  <view wx:if="{{view !== 'intro' && view !== 'finished'}}" class="save-bar">
+    <button class="btn-save" bindtap="endAndSave">结束并保存</button>
+  </view>
+
+  <!-- 放弃确认弹层 -->
+  <view wx:if="{{showQuitConfirm}}" class="mask" bindtap="onCancelQuit">
+    <view class="quit-dialog" catchtap="noop">
+      <view class="quit-title">放弃本局？</view>
+      <view class="quit-text">已作答进度将不会保存。如需保留成绩请点「结束并保存」。</view>
+      <view class="quit-actions">
+        <button class="quit-btn secondary" bindtap="onCancelQuit">继续游戏</button>
+        <button class="quit-btn danger" bindtap="confirmQuit">放弃返回</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 排行榜（公共组件：今日/总 Tab） -->
+  <leaderboard-sheet
+    visible="{{showRanking}}"
+    game-code="detail"
+    game-name="细节"
+    score-type="detail"
+    bind:close="onCloseRanking"
+  />
+  <!-- 首次保存成绩：设置用户名 -->
+  <username-dialog
+    visible="{{showUsernameDialog}}"
+    bind:confirmed="onUsernameConfirmed"
+    bind:close="onUsernameClose"
+  />
+</view>

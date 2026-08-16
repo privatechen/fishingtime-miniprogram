@@ -44,6 +44,27 @@ export async function ensureLogin(): Promise<LoginResult> {
   }
 }
 
+/**
+ * 强制刷新登录态：始终用新 code 调 wx-login，返回有效 token 或进入注册。
+ * 后端 token 存内存、重启即失效；保存成绩等关键操作前调用，避免用失效 token 静默保存失败。
+ */
+export async function ensureFreshLogin(): Promise<LoginResult> {
+  try {
+    const code = await getWxCode()
+    const res = await post<WxLoginResult>('/api/auth/wx-login', { code })
+    if (res.code !== 200 || !res.data) return 'fail'
+    if (res.data.token && res.data.user) {
+      setToken(res.data.token)
+      setUser(res.data.user)
+      return 'ok'
+    }
+    if (res.data.needUsername) return 'needUsername'
+    return 'fail'
+  } catch {
+    return 'fail'
+  }
+}
+
 /** 用用户名注册（首次设置用户名建立身份，昵称=用户名），成功则已存 token+user */
 export async function registerWithUsername(
   username: string,

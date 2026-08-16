@@ -1,0 +1,506 @@
+.page {
+  min-height: 100vh;
+  padding: 24rpx 32rpx calc(120rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+/* 按钮文字垂直居中：小程序 button 默认 line-height/padding 会导致文字偏上 */
+button {
+  padding: 0;
+  margin: 0;
+  line-height: normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* ── 卡片 ── */
+.card {
+  background: #fff;
+  border-radius: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+  padding: 40rpx 32rpx;
+  text-align: center;
+}
+
+/* ── 开始页 ── */
+.intro-card {
+  margin-top: 48rpx;
+}
+.intro-title {
+  font-size: 56rpx;
+  font-weight: 800;
+  color: #2d8cf0;
+  margin-bottom: 8rpx;
+}
+.intro-subtitle {
+  color: #86909c;
+  font-size: 26rpx;
+  margin-bottom: 28rpx;
+}
+.rule-item {
+  display: flex;
+  justify-content: center;
+  gap: 12rpx;
+  margin-bottom: 14rpx;
+  font-size: 27rpx;
+}
+.rule-label {
+  color: #2d8cf0;
+  font-weight: 600;
+}
+.rule-item text:last-child {
+  color: #4e5969;
+}
+.intro-duration {
+  color: #86909c;
+  font-size: 24rpx;
+  margin-bottom: 16rpx;
+}
+.intro-best {
+  color: #2d8cf0;
+  font-size: 25rpx;
+  margin-bottom: 20rpx;
+}
+.btn-start {
+  background: #2d8cf0;
+  color: #fff;
+  border-radius: 40rpx;
+  font-size: 30rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+}
+.btn-start::after {
+  border: none;
+}
+.btn-rank {
+  margin-top: 20rpx;
+  background: #f2f3f5;
+  color: #4e5969;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+}
+.btn-rank::after {
+  border: none;
+}
+
+/* ── 实时成绩条 ── */
+.live-strip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 14rpx 0;
+  margin-bottom: 16rpx;
+  font-size: 26rpx;
+  color: #86909c;
+}
+.live-strip .num {
+  color: #2d8cf0;
+  font-weight: 700;
+}
+.live-strip .dot {
+  color: #e5e6eb;
+}
+
+/* ── 顶部栏 ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+.top-btn {
+  font-size: 26rpx;
+  color: #2d8cf0;
+  padding: 8rpx 4rpx;
+}
+.game-name {
+  font-size: 30rpx;
+  font-weight: 700;
+}
+.timer {
+  min-width: 90rpx;
+  text-align: right;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+.timer-hurry {
+  color: #e74c3c;
+  transform: scale(1.15);
+}
+
+/* ── 观察阶段 ── */
+.observe-area {
+  display: flex;
+  flex-direction: column;
+}
+.observe-tip {
+  text-align: center;
+  color: #86909c;
+  font-size: 25rpx;
+  margin-bottom: 16rpx;
+}
+.image-wrap {
+  position: relative;
+  background: #f2f3f5;
+  border-radius: 20rpx;
+  overflow: hidden;
+  min-height: 640rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.detail-image {
+  width: 100%;
+  max-height: 70vh;
+}
+.image-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  color: #86909c;
+  font-size: 26rpx;
+}
+.retry-btn {
+  background: #f2f3f5;
+  color: #2d8cf0;
+  border-radius: 32rpx;
+  font-size: 26rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  padding: 0 40rpx;
+}
+.retry-btn::after {
+  border: none;
+}
+
+/* 观察倒计时：图片正下方，小号展示 */
+.countdown-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  margin-top: 20rpx;
+  min-height: 44rpx;
+}
+.countdown-num {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #2d8cf0;
+  min-width: 48rpx;
+  text-align: center;
+}
+.countdown-num.hurry {
+  color: #e74c3c;
+}
+.countdown-label {
+  font-size: 26rpx;
+  color: #86909c;
+}
+
+/* ── 盲选题号 ── */
+.drawing-area {
+  display: flex;
+  flex-direction: column;
+}
+.drawing-tip {
+  text-align: center;
+  color: #86909c;
+  font-size: 26rpx;
+  margin: 20rpx 0 40rpx;
+}
+.number-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24rpx;
+}
+.number-card {
+  height: 180rpx;
+  border: 2rpx solid #e5e6eb;
+  border-radius: 24rpx;
+  background: #fff;
+  font-size: 52rpx;
+  font-weight: 700;
+  color: #2d8cf0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── 作答阶段 ── */
+.answer-area {
+  display: flex;
+  flex-direction: column;
+}
+.question-text {
+  font-size: 34rpx;
+  font-weight: 600;
+  text-align: center;
+  margin: 24rpx 0 40rpx;
+  min-height: 120rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24rpx;
+}
+.option-btn {
+  height: 140rpx;
+  border: 2rpx solid #e5e6eb;
+  border-radius: 24rpx;
+  background: #fff;
+  font-size: 32rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16rpx;
+}
+
+/* ── 结果 / 结算 ── */
+.result-card {
+  margin-top: 40rpx;
+}
+.result-title {
+  font-size: 48rpx;
+  font-weight: 800;
+  margin-bottom: 16rpx;
+}
+.result-title.ok,
+.ok {
+  color: #27ae60;
+}
+.result-title.bad,
+.bad {
+  color: #e74c3c;
+}
+.result-line {
+  font-size: 28rpx;
+  margin-bottom: 10rpx;
+}
+.result-now {
+  color: #86909c;
+  font-size: 24rpx;
+  margin: 12rpx 0 24rpx;
+}
+.result-actions {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 24rpx;
+}
+.result-btn {
+  flex: 1;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  height: 84rpx;
+  line-height: 84rpx;
+}
+.result-btn::after {
+  border: none;
+}
+.result-btn.primary {
+  background: #2d8cf0;
+  color: #fff;
+}
+.result-btn.secondary {
+  background: #f2f3f5;
+  color: #4e5969;
+}
+.result-btn.link {
+  background: none;
+  color: #86909c;
+  font-size: 25rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+}
+
+/* 回看 */
+.review-bar {
+  margin-top: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+.review-answer {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+.review-btn {
+  flex: 0 0 auto;
+  width: 200rpx;
+}
+
+/* 结算 */
+.finish-score {
+  font-size: 96rpx;
+  font-weight: 800;
+  margin: 8rpx 0 4rpx;
+}
+.finish-total {
+  font-size: 40rpx;
+  color: #86909c;
+}
+.round-detail {
+  margin-top: 24rpx;
+  background: #f7f8fa;
+  border-radius: 20rpx;
+  padding: 20rpx 24rpx;
+  text-align: left;
+}
+.round-detail-title {
+  font-size: 24rpx;
+  color: #86909c;
+  margin-bottom: 10rpx;
+}
+.round-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 8rpx 0;
+  font-size: 27rpx;
+  border-bottom: 1rpx solid #f2f3f5;
+}
+.round-row:last-child {
+  border-bottom: none;
+}
+.round-no {
+  width: 110rpx;
+  color: #86909c;
+}
+.round-mark {
+  flex: 1;
+  font-weight: 600;
+}
+.round-time {
+  color: #86909c;
+  font-size: 24rpx;
+}
+.round-row.skip {
+  opacity: 0.5;
+}
+.score-note {
+  margin-top: 16rpx;
+  font-size: 22rpx;
+  color: #c9cdd4;
+}
+.finish-ranks {
+  margin-top: 20rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+.rank-chip {
+  background: #f2f3f5;
+  border-radius: 16rpx;
+  padding: 14rpx;
+  font-size: 27rpx;
+  color: #4e5969;
+}
+.best-line {
+  color: #86909c;
+  font-size: 24rpx;
+}
+.save-tip {
+  margin-top: 20rpx;
+  color: #86909c;
+  font-size: 25rpx;
+}
+.save-btn {
+  margin-top: 20rpx;
+}
+
+/* ── 底部结束并保存 ── */
+.save-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 16rpx 32rpx calc(16rpx + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.94);
+  border-top: 1rpx solid #e5e6eb;
+}
+.btn-save {
+  background: #2d8cf0;
+  color: #fff;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  height: 88rpx;
+  line-height: 88rpx;
+}
+.btn-save::after {
+  border: none;
+}
+
+/* ── 放弃确认弹层 ── */
+.mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.quit-dialog {
+  width: 560rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 40rpx 36rpx;
+  text-align: center;
+}
+.quit-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  margin-bottom: 16rpx;
+}
+.quit-text {
+  color: #86909c;
+  font-size: 26rpx;
+  line-height: 1.6;
+  margin-bottom: 28rpx;
+}
+.quit-actions {
+  display: flex;
+  gap: 20rpx;
+}
+.quit-btn {
+  flex: 1;
+  border-radius: 36rpx;
+  font-size: 28rpx;
+  height: 76rpx;
+  line-height: 76rpx;
+}
+.quit-btn::after {
+  border: none;
+}
+.quit-btn.secondary {
+  background: #f2f3f5;
+  color: #4e5969;
+}
+.quit-btn.danger {
+  background: #e74c3c;
+  color: #fff;
+}
+
+/* ── 通用 ── */
+.error-text {
+  color: #e74c3c;
+  font-size: 24rpx;
+  text-align: center;
+  margin-top: 16rpx;
+}

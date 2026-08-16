@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "细节",
+  "usingComponents": {
+    "username-dialog": "/components/username-dialog/username-dialog",
+    "leaderboard-sheet": "/components/leaderboard-sheet/leaderboard-sheet"
+  }
+}

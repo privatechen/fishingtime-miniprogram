@@ -25,7 +25,7 @@ const PAGE_SIZE = 20
  * 公共排行榜弹层
  *
  * 今日排名 / 总排名 双 Tab（默认今日）；列表 + 底部固定我的排名 + 滚动加载更多 + 重试。
- * scoreType: number=分数原样；seconds=颜色猎手毫秒转秒；pools=鱼群突围清空池数（次级=放生数）
+ * scoreType: number=分数原样；seconds=颜色猎手毫秒转秒；pools=鱼群突围清空池数（次级=放生数）；detail=答对题数（次级=用时）
  */
 Component({
   properties: {
@@ -101,17 +101,19 @@ Component({
       }
     },
 
-    /** 成绩展示：number=原样；seconds=毫秒转秒；pools=清空池数 */
+    /** 成绩展示：number=原样；seconds=毫秒转秒；pools=清空池数；detail=答对题数（次级=用时） */
     formatScore(score: number): string {
       if (score == null) return ''
       if (this.data.scoreType === 'seconds') return `${(score / 1000).toFixed(2)}s`
       if (this.data.scoreType === 'pools') return `${score} 池`
+      if (this.data.scoreType === 'detail') return `答对 ${score}`
       return String(score)
     },
 
     formatSecondary(sec: number | null): string {
       if (sec == null) return ''
       if (this.data.scoreType === 'pools') return `放生 ${sec} 条`
+      if (this.data.scoreType === 'detail') return ` · ${(sec / 1000).toFixed(1)}s`
       return ''
     },
 
