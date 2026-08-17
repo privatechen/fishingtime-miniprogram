@@ -16,7 +16,10 @@
   border-radius: 24rpx 24rpx 0 0;
   padding: 24rpx 24rpx;
   padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
-  max-height: 78vh;
+  /* 固定高度：让 flex 布局有确定空间分配，避免列表被 height:0 压塌（真机不显示） */
+  height: 78vh;
+  box-sizing: border-box;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -68,7 +71,7 @@
 
 .rank-list {
   flex: 1;
-  height: 0;
+  min-height: 0;
 }
 .rank-item {
   display: flex;
