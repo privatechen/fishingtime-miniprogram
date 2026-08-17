@@ -171,16 +171,28 @@ button {
   color: #86909c;
   font-size: 26rpx;
 }
-.retry-btn {
-  background: #f2f3f5;
-  color: #2d8cf0;
+.error-actions {
+  display: flex;
+  gap: 20rpx;
+}
+.retry-btn,
+.skip-btn {
   border-radius: 32rpx;
   font-size: 26rpx;
   height: 72rpx;
   line-height: 72rpx;
-  padding: 0 40rpx;
+  padding: 0 36rpx;
 }
-.retry-btn::after {
+.retry-btn {
+  background: #f2f3f5;
+  color: #2d8cf0;
+}
+.skip-btn {
+  background: #2d8cf0;
+  color: #fff;
+}
+.retry-btn::after,
+.skip-btn::after {
   border: none;
 }
 

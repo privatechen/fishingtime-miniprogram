@@ -39,7 +39,10 @@
         <view wx:if="{{!imageReady && !imageError}}" class="image-state">图片加载中...</view>
         <view wx:if="{{imageError}}" class="image-state">
           <view>图片加载失败</view>
-          <button class="retry-btn" bindtap="retryImage">重试</button>
+          <view class="error-actions">
+            <button class="retry-btn" bindtap="retryImage">重试</button>
+            <button class="skip-btn" bindtap="skipImage">切换下一张</button>
+          </view>
         </view>
       </view>
       <!-- 观察倒计时：图片正下方，小号展示 -->

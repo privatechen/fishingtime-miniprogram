@@ -22,6 +22,8 @@ import { getToken } from '../../../utils/request'
 const OBSERVE_MS = 10_000
 const ANSWER_MS = 8_000
 const TOTAL_ROUNDS = 5
+/** 图片加载超时（毫秒）：超过仍未加载成功/失败，视为坏图，允许切换下一张 */
+const IMAGE_LOAD_TIMEOUT_MS = 3_000
 
 /** 本地最佳（答对题数） */
 const LOCAL_KEY_BEST = 'fishingtime:local:detail:best'
@@ -42,6 +44,8 @@ let roundResults: Array<{ correct: boolean; elapsedMs: number }> = []
 let observeEndAt = 0
 let answerEndAt = 0
 let ticker: number | null = null
+/** 图片加载超时计时器（观察阶段） */
+let imageLoadTimer: number | null = null
 /** token 失效后强制刷新登录态的重试开关，防止死循环 */
 let finishRetried = false
 
@@ -77,6 +81,7 @@ Page({
 
   onUnload() {
     this.stopTicker()
+    this.clearImageLoadTimer()
   },
 
   // ────────────── 通用计时 ──────────────
@@ -90,6 +95,23 @@ Page({
     if (ticker !== null) {
       clearInterval(ticker)
       ticker = null
+    }
+  },
+
+  /** 观察阶段图片加载超时：3 秒内既没成功也没失败 → 进入「图片加载失败」状态，避免卡死 */
+  startImageLoadTimer() {
+    this.clearImageLoadTimer()
+    imageLoadTimer = setTimeout(() => {
+      if (!this.data.imageReady) {
+        this.setData({ imageError: true, imageReady: false })
+      }
+    }, IMAGE_LOAD_TIMEOUT_MS)
+  },
+
+  clearImageLoadTimer() {
+    if (imageLoadTimer !== null) {
+      clearTimeout(imageLoadTimer)
+      imageLoadTimer = null
     }
   },
 
@@ -122,13 +144,16 @@ Page({
           liveElapsedText: '0.0',
           errorText: '',
         })
+        this.startImageLoadTimer()
       })
       .catch(() => this.setData({ submitting: false, errorText: '开局失败，请重试' }))
   },
 
   onImageLoad() {
     if (this.data.view !== 'observing' || this.data.imageReady) return
-    this.setData({ imageReady: true })
+    this.clearImageLoadTimer()
+    // 超时置错后图片才加载成功：清除错误态，继续正常计时
+    this.setData({ imageReady: true, imageError: false })
     // 图片加载完成才开始观察倒计时
     observeEndAt = Date.now() + OBSERVE_MS
     this.startTicker(() => {
@@ -142,17 +167,26 @@ Page({
   },
 
   onImageError() {
+    this.clearImageLoadTimer()
     this.setData({ imageError: true, imageReady: false })
     this.stopTicker()
   },
 
   retryImage() {
     this.setData({ imageError: false })
-    // 重新加载图片：更新 src 触发 bindload/binderror
+    // 重新加载图片：更新 src 触发 bindload/binderror；同时重置加载超时
     this.setData({ imageUrl: '' })
     wx.nextTick(() => {
       this.setData({ imageUrl: BASE_URL + rounds[roundIndex].imageUrl })
+      this.startImageLoadTimer()
     })
+  },
+
+  /** 切换下一张：图片拿不到时跳过本轮（未抽题的轮次结算时不计数） */
+  skipImage() {
+    this.clearImageLoadTimer()
+    this.stopTicker()
+    this.goNext()
   },
 
   // ────────────── 抽题 / 作答 ──────────────
@@ -233,6 +267,7 @@ Page({
         question: null,
         answer: null,
       })
+      this.startImageLoadTimer()
     } else {
       this.finishGame()
     }
@@ -321,6 +356,7 @@ Page({
   /** 结束并保存：停掉计时，确保有效登录后结算保存（token 失效由 finishGame 内刷新重试兜底） */
   endAndSave() {
     this.stopTicker()
+    this.clearImageLoadTimer()
     if (getToken()) {
       this.finishGame()
       return
@@ -348,6 +384,7 @@ Page({
   confirmQuit() {
     this.setData({ showQuitConfirm: false })
     this.stopTicker()
+    this.clearImageLoadTimer()
     wx.navigateBack()
   },
 
