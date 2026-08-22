@@ -1,24 +1,26 @@
 <view class="page">
-  <!-- 全网共同热点（为空时整个模块隐藏） -->
+  <!-- 全网共同热点（为空时整个模块隐藏）：全部放进可滚动容器，超过约 4 条高度可下滑 -->
   <view wx:if="{{commonHotspots.length > 0}}" class="common-card">
     <view class="common-header">🌐 全网共同热点</view>
-    <view
-      wx:for="{{commonHotspots}}"
-      wx:key="title"
-      class="common-item"
-      data-index="{{index}}"
-      bindtap="onCommonTap"
-    >
-      <view class="common-keywords">{{item.title}}</view>
-      <view class="common-sources">
-        <text
-          wx:for="{{item.sources}}"
-          wx:for-item="src"
-          wx:key="platform"
-          class="common-source"
-        >{{src.platformName}} #{{src.rank}}</text>
+    <scroll-view scroll-y class="common-scroll">
+      <view
+        wx:for="{{commonHotspots}}"
+        wx:key="title"
+        class="common-item"
+        data-index="{{index}}"
+        bindtap="onCommonTap"
+      >
+        <view class="common-keywords">{{item.title}}</view>
+        <view class="common-sources">
+          <text
+            wx:for="{{item.sources}}"
+            wx:for-item="src"
+            wx:key="platform"
+            class="common-source"
+          >{{src.platformName}} #{{src.rank}}</text>
+        </view>
       </view>
-    </view>
+    </scroll-view>
   </view>
 
   <!-- 平台 Tab（点击切换，与 swiper 联动） -->

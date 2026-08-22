@@ -33,26 +33,16 @@ interface GameRecordView {
   secondaryValue: string
 }
 
-/** 本机本地成绩（游戏接入时写入这些 key） */
+/** 本机本地成绩（游戏接入时写入这些 key）；审核期仅保留展示的三个 */
 interface LocalRecords {
-  '2048'?: { best?: number }
   'color-focus'?: { best?: number; accuracy?: number }
   'direction-trap'?: { best?: number }
-  'color-hunter'?: { finalTime?: number }
-  'fish-breakout'?: { clearedPools?: number; releasedFish?: number }
-  'extreme-fishing'?: { score?: number; combo?: number }
 }
 
 const GAME_LOCAL_KEYS: Record<string, string> = {
-  '2048': 'fishingtime:local:2048:best',
   'color-focus': 'fishingtime:local:color-focus:best',
   'color-focus:accuracy': 'fishingtime:local:color-focus:accuracy',
   'direction-trap': 'fishingtime:local:direction-trap:best',
-  'color-hunter': 'fishingtime:local:color-hunter:finalTime',
-  'fish-breakout': 'fishingtime:local:fish-breakout:bestClearedPools',
-  'fish-breakout:fish': 'fishingtime:local:fish-breakout:bestReleasedFish',
-  'extreme-fishing': 'fishingtime:local:extreme-fishing:bestScore',
-  'extreme-fishing:combo': 'fishingtime:local:extreme-fishing:bestCombo',
 }
 
 Page({
@@ -105,32 +95,18 @@ Page({
       return typeof v === 'number' && v > 0 ? v : undefined
     }
     return {
-      '2048': { best: num(GAME_LOCAL_KEYS['2048']) },
       'color-focus': {
         best: num(GAME_LOCAL_KEYS['color-focus']),
         accuracy: num(GAME_LOCAL_KEYS['color-focus:accuracy']),
       },
       'direction-trap': { best: num(GAME_LOCAL_KEYS['direction-trap']) },
-      'color-hunter': { finalTime: num(GAME_LOCAL_KEYS['color-hunter']) },
-      'fish-breakout': {
-        clearedPools: num(GAME_LOCAL_KEYS['fish-breakout']),
-        releasedFish: num(GAME_LOCAL_KEYS['fish-breakout:fish']),
-      },
-      'extreme-fishing': {
-        score: num(GAME_LOCAL_KEYS['extreme-fishing']),
-        combo: num(GAME_LOCAL_KEYS['extreme-fishing:combo']),
-      },
     }
   },
 
-  /** 账号成绩与本地成绩合并：得分制取更大，时间制（颜色猎手）取更小 */
+  /** 账号成绩与本地成绩合并：得分制取更大；审核期仅展示保留的三个入口 */
   buildGames(server: ServerRecord[], local: LocalRecords): GameRecordView[] {
     const s = (id: string) => server.find((r) => r.gameType === id)
     const fmtAccuracy = (v?: number) => (v == null ? '' : `${Math.round(v * 100)}%`)
-    const fmtSeconds = (v?: number) => (v == null ? '' : `${(v / 1000).toFixed(2)}s`)
-
-    const s2048 = s('2048')
-    const best2048 = this.maxNum(s2048?.bestScore, local['2048']?.best)
 
     const sCf = s('color-focus')
     const bestCf = this.maxNum(sCf?.bestScore, local['color-focus']?.best)
@@ -139,18 +115,8 @@ Page({
     const sDt = s('direction-trap')
     const bestDt = this.maxNum(sDt?.bestScore, local['direction-trap']?.best)
 
-    const sCh = s('color-hunter')
-    const finalTime = this.minNum(sCh?.bestFinalTime, local['color-hunter']?.finalTime)
-
     // 只保留玩过的游戏（本地或账号有核心成绩），没玩过的不显示
     const views: GameRecordView[] = []
-    if (best2048 != null) {
-      views.push({
-        id: '2048', name: '2048', icon: '/assets/games/2048.png', hasIcon: true,
-        primaryLabel: '最高分', primaryValue: String(best2048),
-        secondaryLabel: '最大方块', secondaryValue: s2048?.maxTile != null ? String(s2048.maxTile) : '',
-      })
-    }
     if (bestCf != null) {
       views.push({
         id: 'color-focus', name: '专注色彩', icon: '/assets/games/color-focus.png', hasIcon: true,
@@ -165,35 +131,6 @@ Page({
         secondaryLabel: '最高连对', secondaryValue: sDt?.maxStreak != null ? String(sDt.maxStreak) : '',
       })
     }
-    if (finalTime != null) {
-      views.push({
-        id: 'color-hunter', name: '颜色猎手', icon: '/assets/games/color-hunter.png', hasIcon: true,
-        primaryLabel: '最佳成绩', primaryValue: fmtSeconds(finalTime),
-        secondaryLabel: '最少错误', secondaryValue: sCh?.lowestErrorCount != null ? String(sCh.lowestErrorCount) : '',
-      })
-    }
-
-    const sFb = s('fish-breakout')
-    const bestFb = this.maxNum(sFb?.bestClearedPools, local['fish-breakout']?.clearedPools)
-    const releasedFb = sFb?.bestReleasedFish ?? local['fish-breakout']?.releasedFish
-    if (bestFb != null) {
-      views.push({
-        id: 'fish-breakout', name: '鱼群突围', icon: '/assets/games/fish-breakout.png', hasIcon: true,
-        primaryLabel: '最高清空', primaryValue: `${bestFb} 池`,
-        secondaryLabel: '放生', secondaryValue: releasedFb != null ? `${releasedFb} 条` : '',
-      })
-    }
-
-    const sEf = s('extreme-fishing')
-    const bestEf = this.maxNum(sEf?.bestScore, local['extreme-fishing']?.score)
-    const comboEf = sEf?.bestMaxCombo ?? local['extreme-fishing']?.combo
-    if (bestEf != null) {
-      views.push({
-        id: 'extreme-fishing', name: '极限捞鱼', icon: '/assets/games/extreme-fishing.png', hasIcon: true,
-        primaryLabel: '最高分', primaryValue: String(bestEf),
-        secondaryLabel: '最高Combo', secondaryValue: comboEf != null ? `×${comboEf}` : '',
-      })
-    }
     return views
   },
 
@@ -201,12 +138,6 @@ Page({
     if (a == null) return b
     if (b == null) return a
     return Math.max(a, b)
-  },
-
-  minNum(a?: number, b?: number): number | undefined {
-    if (a == null) return b
-    if (b == null) return a
-    return Math.min(a, b)
   },
 
   /** 登录/注册：先玩后登录，主动点击才建立身份（首次需设置用户名时弹自定义弹层） */

@@ -20,7 +20,7 @@
 
   <!-- 我的游戏 -->
   <view class="section">
-    <view class="section-title">我的游戏</view>
+    <view class="section-title">我的解压程度</view>
     <view wx:for="{{games}}" wx:key="id" class="game-item" data-id="{{item.id}}" bindtap="onGameTap">
       <view class="game-icon">
         <image wx:if="{{item.hasIcon}}" class="game-icon-img" src="{{item.icon}}" mode="aspectFill" />

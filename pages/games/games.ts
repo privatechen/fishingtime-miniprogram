@@ -9,13 +9,11 @@ interface GameItem {
   path?: string
 }
 
+// 审核要求：不展示游戏，仅保留「非游戏类」三个入口（专注色彩 / 方向陷阱 / 细节）
+// 被隐藏的 2048 / 颜色猎手 / 鱼群突围 / 极限捞鱼 代码保留，审核通过后如需恢复加回数组即可
 const GAMES: GameItem[] = [
   { id: 'color-focus', name: '专注色彩', desc: '30 秒专注力挑战', icon: '🎨', cover: '/assets/games/color-focus.png', path: '/pages/games/color-focus/color-focus' },
-  { id: '2048', name: '2048', desc: '合并数字挑战高分', icon: '🎯', cover: '/assets/games/2048.png', path: '/pages/games/2048/game2048' },
   { id: 'direction-trap', name: '方向陷阱', desc: '30 秒反应挑战', icon: '🧭', cover: '/assets/games/direction-trap.png', path: '/pages/games/direction-trap/direction-trap' },
-  { id: 'color-hunter', name: '颜色猎手', desc: '找出所有目标颜色', icon: '🔍', cover: '/assets/games/color-hunter.png', path: '/pages/games/color-hunter/color-hunter' },
-  { id: 'fish-breakout', name: '鱼群突围', desc: '30 秒连续清空鱼池', icon: '🐟', cover: '/assets/games/fish-breakout.png', path: '/pages/games/fish-breakout/fish-breakout' },
-  { id: 'extreme-fishing', name: '极限捞鱼', desc: '拖动撒网，30 秒冲分', icon: '🎣', cover: '/assets/games/extreme-fishing.png', path: '/pages/games/extreme-fishing/extreme-fishing' },
   { id: 'detail', name: '细节', desc: '看图 10 秒，记住每一个细节', icon: '👀', path: '/pages/games/detail/detail' },
 ]
 

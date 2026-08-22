@@ -25,6 +25,10 @@
 .common-item:last-child {
   border-bottom: none;
 }
+/* 超过 4 条时的滑块区：固定高度内上下滑动 */
+.common-scroll {
+  max-height: 460rpx;
+}
 .common-keywords {
   font-size: 32rpx;
   font-weight: 600;
