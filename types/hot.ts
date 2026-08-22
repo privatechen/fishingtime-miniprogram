@@ -46,12 +46,13 @@ export interface CommonHotCluster {
   items: CommonHotRawItem[]
 }
 
-/** 平台配置：顺序 微博→百度→知乎→抖音→头条（抖音热榜替换虎扑） */
+/** 平台配置：顺序 微博→百度→知乎→抖音→快手→头条 */
 export const PLATFORMS: { id: string; name: string }[] = [
   { id: 'weibo', name: '微博' },
   { id: 'baidu', name: '百度' },
   { id: 'zhihu', name: '知乎' },
   { id: 'douyin', name: '抖音' },
+  { id: 'kuaishou', name: '快手' },
   { id: 'toutiao', name: '头条' },
 ]
 
@@ -60,5 +61,6 @@ export const PLATFORM_NAME: Record<string, string> = {
   baidu: '百度',
   zhihu: '知乎',
   douyin: '抖音',
+  kuaishou: '快手',
   toutiao: '头条',
 }
