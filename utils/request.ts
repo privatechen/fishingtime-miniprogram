@@ -88,7 +88,7 @@ async function refreshToken(): Promise<boolean> {
     })
     const res = await request<{ token: string }>(
       '/api/auth/wx-login',
-      { method: 'POST', data: { code } },
+      { method: 'POST', data: { code, appId: wx.getAccountInfoSync().miniProgram.appId } },
       false, // wx-login 自身不再触发 401 重试
     )
     if (res.code === 200 && res.data?.token) {

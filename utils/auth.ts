@@ -9,6 +9,15 @@ interface WxLoginResult {
 /** 登录结果：ok=已有身份可直接操作；needUsername=首次需设置用户名（页面弹自定义弹层）；fail=失败 */
 export type LoginResult = 'ok' | 'needUsername' | 'fail'
 
+/** 当前小程序 appid（多小程序共用后端时，code2session 需用对应 appid 的 secret） */
+export function getAppId(): string {
+  try {
+    return wx.getAccountInfoSync().miniProgram.appId || ''
+  } catch {
+    return ''
+  }
+}
+
 /** wx.login 获取临时 code */
 function getWxCode(): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -30,7 +39,7 @@ export async function ensureLogin(): Promise<LoginResult> {
   if (getToken()) return 'ok'
   try {
     const code = await getWxCode()
-    const res = await post<WxLoginResult>('/api/auth/wx-login', { code })
+    const res = await post<WxLoginResult>('/api/auth/wx-login', { code, appId: getAppId() })
     if (res.code !== 200 || !res.data) return 'fail'
     if (res.data.token && res.data.user) {
       setToken(res.data.token)
@@ -51,7 +60,7 @@ export async function ensureLogin(): Promise<LoginResult> {
 export async function ensureFreshLogin(): Promise<LoginResult> {
   try {
     const code = await getWxCode()
-    const res = await post<WxLoginResult>('/api/auth/wx-login', { code })
+    const res = await post<WxLoginResult>('/api/auth/wx-login', { code, appId: getAppId() })
     if (res.code !== 200 || !res.data) return 'fail'
     if (res.data.token && res.data.user) {
       setToken(res.data.token)
@@ -71,7 +80,7 @@ export async function registerWithUsername(
 ): Promise<{ ok: boolean; message?: string }> {
   try {
     const code = await getWxCode() // 微信 code 一次性，需重新获取
-    const res = await post<WxLoginResult>('/api/auth/wx-register', { code, username })
+    const res = await post<WxLoginResult>('/api/auth/wx-register', { code, username, appId: getAppId() })
     if (res.code === 200 && res.data?.token && res.data.user) {
       setToken(res.data.token)
       setUser(res.data.user)
