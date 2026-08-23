@@ -28,6 +28,7 @@
     <button class="retry-btn" bindtap="onSeeRecommend">看看推荐</button>
     <button class="retry-btn ghost" bindtap="onGoDecompress">去解压放松</button>
     <button class="submit-link" bindtap="openSubmit">想不出了？出个你自己的题 →</button>
+    <button class="submit-link" bindtap="openMine">我的投稿</button>
   </view>
 
   <!-- 题目卡 -->
@@ -120,6 +121,85 @@
         <button class="retry-btn" loading="{{submitSubmitting}}" disabled="{{submitSubmitting}}" bindtap="onSubmitQuestion">提交审核</button>
         <view class="submit-tip">提交后需管理员审核，通过后就能让大家瞅瞅</view>
       </scroll-view>
+    </view>
+  </view>
+
+  <!-- 我的投稿弹层 -->
+  <view wx:if="{{showMine}}" class="submit-mask" bindtap="closeMine">
+    <view class="submit-sheet" catchtap="noop">
+      <view class="submit-head">
+        <view class="submit-title">{{mineDetail ? '我的投稿' : '我的投稿'}}</view>
+        <view class="submit-close" bindtap="closeMine">✕</view>
+      </view>
+
+      <!-- 列表 -->
+      <block wx:if="{{!mineDetail}}">
+        <scroll-view scroll-y class="submit-scroll">
+          <view wx:if="{{mineList.length === 0}}" class="submit-tip" style="padding: 40rpx 0;">还没有投稿，答完去出个题吧</view>
+          <view
+            wx:for="{{mineList}}"
+            wx:key="questionId"
+            class="mine-item"
+            data-index="{{index}}"
+            bindtap="onMineItemTap"
+          >
+            <view class="mine-top">
+              <text class="mine-status s{{item.status}}">{{item.status === 0 ? '待审核' : item.status === 1 ? '已上线' : '已驳回'}}</text>
+              <text class="mine-content">{{item.content}}</text>
+            </view>
+            <view wx:if="{{item.rejectReason}}" class="mine-reason">驳回原因：{{item.rejectReason}}</view>
+            <view wx:if="{{item.answered}}" class="mine-answered">已回答 ›</view>
+          </view>
+        </scroll-view>
+      </block>
+
+      <!-- 详情/回答 -->
+      <block wx:else>
+        <scroll-view scroll-y class="submit-scroll">
+          <view wx:if="{{mineDetail}}" class="mine-detail">
+            <view class="mine-detail-status s{{mineDetail.status}}">
+              {{mineDetail.status === 0 ? '待审核' : mineDetail.status === 1 ? '已上线' : '已驳回'}}
+            </view>
+            <view wx:if="{{mineDetail.rejectReason}}" class="mine-reason">驳回原因：{{mineDetail.rejectReason}}</view>
+            <view class="mine-detail-q">{{mineDetail.content}}</view>
+
+            <!-- 待审且未答：可回答 -->
+            <block wx:if="{{mineDetail.status === 0 && !mineDetail.answered}}">
+              <view
+                wx:for="{{mineDetail.options}}"
+                wx:key="id"
+                class="submit-opt-row mine-answer-opt"
+                data-oid="{{item.id}}"
+                bindtap="onMineOptionTap"
+              >
+                <text class="opt-icon">{{item.icon}}</text>
+                <text class="opt-text">{{item.content}}</text>
+              </view>
+              <view class="submit-tip">选一个你的答案，通过后会算进统计</view>
+            </block>
+
+            <!-- 已答或已上线：结果态 -->
+            <block wx:else>
+              <view
+                wx:for="{{mineDetail.options}}"
+                wx:key="id"
+                class="qa-detail-option {{item.id === mineDetail.myOptionId ? 'mine' : ''}}"
+              >
+                <view class="qa-detail-opt-row">
+                  <text class="opt-icon">{{item.icon}}</text>
+                  <text class="opt-text">{{item.content}}</text>
+                  <text wx:if="{{item.id === mineDetail.myOptionId}}" class="mine-tag">✓ 你</text>
+                  <text class="opt-percent">{{item.percentText}}</text>
+                </view>
+                <view class="bar-bg"><view class="bar" style="width: {{item.percent}}%;"></view></view>
+              </view>
+              <view wx:if="{{mineDetail.status === 0}}" class="submit-tip">已作答，不能修改</view>
+            </block>
+
+            <button class="retry-btn ghost mine-back" bindtap="onMineBack">返回列表</button>
+          </view>
+        </scroll-view>
+      </block>
     </view>
   </view>
 </view>

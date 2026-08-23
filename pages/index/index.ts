@@ -40,6 +40,20 @@ interface QaNextResponse {
   question: QaQuestion | null
 }
 
+/** 我的投稿 */
+interface QaMySubmitVO {
+  questionId: number
+  categoryId: number
+  categoryName: string
+  content: string
+  status: number
+  rejectReason: string
+  answerCount: number
+  answered: boolean
+  myOptionId: number | null
+  options: QaOption[]
+}
+
 const RECOMMEND: QaCategory = { id: 0, code: 'recommend', name: '推荐', icon: '✨' }
 
 /** 数字千分位 */
@@ -82,6 +96,11 @@ Page({
     ] as { icon: string; content: string }[],
     submitError: '',
     submitSubmitting: false,
+    /** 我的投稿 */
+    showMine: false,
+    mineList: [] as QaMySubmitVO[],
+    mineDetail: null as QaMySubmitVO | null,
+    mineSubmitting: false,
   },
 
   onLoad() {
@@ -265,6 +284,70 @@ Page({
       this.setData({ submitError: '网络异常，请重试' })
     } finally {
       this.setData({ submitSubmitting: false })
+    }
+  },
+
+  // ────────────── 我的投稿 ──────────────
+
+  /** 打开我的投稿弹层 */
+  async openMine() {
+    this.setData({ showMine: true, mineDetail: null })
+    try {
+      const res = await get<QaMySubmitVO[]>('/api/qa/questions/mine')
+      if (res.code === 200 && res.data) {
+        const list = res.data.map((it) => ({
+          ...it,
+          options: (it.options || []).map((o) => ({
+            ...o,
+            percentText: o.percent != null ? `${o.percent.toFixed(1)}%` : '',
+          })),
+        }))
+        this.setData({ mineList: list })
+      }
+    } catch {
+      wx.showToast({ title: '我的投稿加载失败', icon: 'none' })
+    }
+  },
+
+  closeMine() {
+    this.setData({ showMine: false, mineDetail: null })
+  },
+
+  onMineItemTap(e: WechatMiniprogram.TouchEvent) {
+    const idx = Number(e.currentTarget.dataset.index)
+    this.setData({ mineDetail: this.data.mineList[idx] })
+  },
+
+  onMineBack() {
+    this.setData({ mineDetail: null })
+  },
+
+  /** 回答自己的待审题 */
+  async onMineOptionTap(e: WechatMiniprogram.TouchEvent) {
+    const detail = this.data.mineDetail
+    if (this.data.mineSubmitting || !detail || detail.answered) return
+    const optionId = Number(e.currentTarget.dataset.oid)
+    this.setData({ mineSubmitting: true })
+    try {
+      const res = await post<QaQuestion>(`/api/qa/questions/${detail.questionId}/answer`, { optionId })
+      if (res.code === 200 && res.data) {
+        const answered = decorate(res.data)
+        this.setData({
+          mineDetail: {
+            ...detail,
+            answered: true,
+            myOptionId: answered.myOptionId,
+            answerCount: answered.answerCount,
+            options: answered.options,
+          },
+        })
+      } else {
+        wx.showToast({ title: res.message || '提交失败', icon: 'none' })
+      }
+    } catch {
+      wx.showToast({ title: '网络异常，请重试', icon: 'none' })
+    } finally {
+      this.setData({ mineSubmitting: false })
     }
   },
 

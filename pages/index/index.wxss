@@ -320,3 +320,104 @@
   font-size: 22rpx;
   margin-top: 16rpx;
 }
+
+/* ── 我的投稿 ── */
+.mine-item {
+  padding: 22rpx 4rpx;
+  border-bottom: 1rpx solid #f0f2f5;
+}
+.mine-top {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+.mine-status {
+  flex-shrink: 0;
+  font-size: 20rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 16rpx;
+}
+.mine-status.s0 { background: #fff2e8; color: #ff7a45; }
+.mine-status.s1 { background: #eafaf1; color: #27ae60; }
+.mine-status.s2 { background: #f2f3f5; color: #86909c; }
+.mine-content {
+  flex: 1;
+  font-size: 28rpx;
+  color: #332d27;
+}
+.mine-reason {
+  font-size: 22rpx;
+  color: #e74c3c;
+  margin-top: 8rpx;
+}
+.mine-answered {
+  font-size: 22rpx;
+  color: #9a9188;
+  margin-top: 8rpx;
+}
+.mine-detail {
+  padding: 8rpx 4rpx;
+}
+.mine-detail-status {
+  display: inline-block;
+  font-size: 22rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 18rpx;
+  margin-bottom: 16rpx;
+}
+.mine-detail-status.s0 { background: #fff2e8; color: #ff7a45; }
+.mine-detail-status.s1 { background: #eafaf1; color: #27ae60; }
+.mine-detail-status.s2 { background: #f2f3f5; color: #86909c; }
+.mine-detail-q {
+  font-size: 34rpx;
+  font-weight: 700;
+  line-height: 1.5;
+  color: #332d27;
+  margin-bottom: 24rpx;
+}
+.mine-answer-opt {
+  background: #f7f3ee;
+  border-radius: 18rpx;
+  padding: 20rpx 22rpx;
+  margin-bottom: 16rpx;
+}
+.mine-back {
+  margin-top: 24rpx;
+}
+
+/* ── 结果态（我的投稿详情复用） ── */
+.qa-detail-option {
+  background: #f7f3ee;
+  border-radius: 18rpx;
+  padding: 16rpx 20rpx;
+  margin-bottom: 16rpx;
+}
+.qa-detail-option.mine {
+  background: #fff2e8;
+  border: 2rpx solid #ff7a45;
+}
+.qa-detail-opt-row {
+  display: flex;
+  align-items: center;
+}
+.qa-detail-opt-row .opt-icon { font-size: 30rpx; margin-right: 12rpx; }
+.qa-detail-opt-row .opt-text { flex: 1; font-size: 28rpx; color: #332d27; }
+.qa-detail-opt-row .opt-percent { color: #ff7a45; font-weight: 700; font-size: 26rpx; }
+.bar-bg {
+  margin-top: 12rpx;
+  height: 12rpx;
+  background: rgba(255, 122, 69, 0.12);
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+.bar {
+  height: 100%;
+  background: #ff7a45;
+  border-radius: 8rpx;
+}
+.mine-tag {
+  color: #ff7a45;
+  font-size: 22rpx;
+  font-weight: 700;
+  margin-right: 10rpx;
+}

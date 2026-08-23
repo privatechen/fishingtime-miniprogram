@@ -284,10 +284,10 @@
 /* ── 我的瞅瞅 ── */
 .qa-card {
   background: #fff;
-  border-radius: 24rpx;
+  border-radius: 28rpx;
   padding: 28rpx;
-  margin: 20rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+  margin: 20rpx 0;
+  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.04);
 }
 .qa-stats {
   display: flex;
