@@ -111,11 +111,17 @@
         <view class="submit-field">
           <text class="submit-label">选项（2~6 个）</text>
           <view wx:for="{{submitOptions}}" wx:key="index" class="submit-opt-row">
+            <view
+              class="submit-opt-radio {{submitAnswerIndex === index ? 'on' : ''}}"
+              data-index="{{index}}"
+              bindtap="onMarkAnswer"
+            >{{submitAnswerIndex === index ? '✓' : ''}}</view>
             <input class="submit-opt-icon" value="{{item.icon}}" placeholder="图标" data-index="{{index}}" bindinput="onSubmitOptIcon" />
             <input class="submit-opt-content" value="{{item.content}}" placeholder="选项内容" data-index="{{index}}" bindinput="onSubmitOptContent" />
             <text class="submit-opt-del" data-index="{{index}}" bindtap="onRemoveOption">✕</text>
           </view>
           <view class="submit-opt-add" bindtap="onAddOption">＋ 添加选项</view>
+          <view class="submit-tip">点选项左侧圆圈可设为「我的答案」（可选）</view>
         </view>
         <view wx:if="{{submitError}}" class="submit-error">{{submitError}}</view>
         <button class="retry-btn" loading="{{submitSubmitting}}" disabled="{{submitSubmitting}}" bindtap="onSubmitQuestion">提交审核</button>

@@ -96,6 +96,8 @@ Page({
     ] as { icon: string; content: string }[],
     submitError: '',
     submitSubmitting: false,
+    /** 我选的答案（选项下标，-1=未选，可选） */
+    submitAnswerIndex: -1,
     /** 我的投稿 */
     showMine: false,
     mineList: [] as QaMySubmitVO[],
@@ -206,8 +208,14 @@ Page({
 
   // ────────────── 出题投稿 ──────────────
 
-  openSubmit() {
-    this.setData({ showSubmit: true, submitError: '' })
+  async openSubmit() {
+    // 打开前确保分类已加载（修复投稿无法选分类）
+    await this.loadCategories()
+    this.setData({ showSubmit: true, submitError: '', submitAnswerIndex: -1 })
+  },
+
+  onMarkAnswer(e: WechatMiniprogram.TouchEvent) {
+    this.setData({ submitAnswerIndex: Number(e.currentTarget.dataset.index) })
   },
 
   closeSubmit() {
@@ -269,13 +277,22 @@ Page({
     }
     this.setData({ submitSubmitting: true, submitError: '' })
     try {
-      const res = await post('/api/qa/submit', {
+      const body: Record<string, unknown> = {
         categoryId: catId,
         content: this.data.submitContent.trim(),
         options,
-      })
+      }
+      // 可选：用户选了自己的答案则一起提交（下标需映射到过滤后的选项数组）
+      const marked = this.data.submitOptions[this.data.submitAnswerIndex]
+      if (marked && marked.content.trim()) {
+        const idxInFiltered = this.data.submitOptions
+          .slice(0, this.data.submitAnswerIndex)
+          .filter((o) => o.content.trim()).length
+        body.answerIndex = idxInFiltered
+      }
+      const res = await post('/api/qa/submit', body)
       if (res.code === 200) {
-        this.setData({ showSubmit: false, submitContent: '', submitCategory: '' })
+        this.setData({ showSubmit: false, submitContent: '', submitCategory: '', submitAnswerIndex: -1 })
         wx.showToast({ title: '提交成功，等待审核', icon: 'success' })
       } else {
         this.setData({ submitError: res.message || '提交失败' })

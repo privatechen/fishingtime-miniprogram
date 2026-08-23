@@ -421,3 +421,21 @@
   font-weight: 700;
   margin-right: 10rpx;
 }
+
+/* ── 选项「设为我的答案」 ── */
+.submit-opt-radio {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  border: 3rpx solid #c9cdd4;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: #fff;
+}
+.submit-opt-radio.on {
+  background: #ff7a45;
+  border-color: #ff7a45;
+}
