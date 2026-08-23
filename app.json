@@ -25,7 +25,7 @@
     "backgroundColor": "#ffffff",
     "borderStyle": "black",
     "list": [
-      { "pagePath": "pages/index/index", "text": "热点信息" },
+      { "pagePath": "pages/index/index", "text": "瞅瞅" },
       { "pagePath": "pages/games/games", "text": "解压工具" },
       { "pagePath": "pages/profile/profile", "text": "我的" }
     ]

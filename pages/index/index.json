@@ -1,4 +1,7 @@
 {
-  "navigationBarTitleText": "FishingTime",
-  "backgroundTextStyle": "dark"
+  "navigationBarTitleText": "瞅瞅",
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "username-dialog": "/components/username-dialog/username-dialog"
+  }
 }

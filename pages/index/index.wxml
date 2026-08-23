@@ -1,99 +1,77 @@
 <view class="page">
-  <!-- 全网共同热点（为空时整个模块隐藏）：全部放进可滚动容器，超过约 4 条高度可下滑 -->
-  <view wx:if="{{commonHotspots.length > 0}}" class="common-card">
-    <view class="common-header">🌐 全网共同热点</view>
-    <scroll-view scroll-y class="common-scroll">
+  <!-- 分类栏 -->
+  <scroll-view scroll-x class="cat-bar" enhanced show-scrollbar="{{false}}">
+    <view class="cat-list">
       <view
-        wx:for="{{commonHotspots}}"
-        wx:key="title"
-        class="common-item"
-        data-index="{{index}}"
-        bindtap="onCommonTap"
-      >
-        <view class="common-keywords">{{item.title}}</view>
-        <view class="common-sources">
-          <text
-            wx:for="{{item.sources}}"
-            wx:for-item="src"
-            wx:key="platform"
-            class="common-source"
-          >{{src.platformName}} #{{src.rank}}</text>
-        </view>
-      </view>
-    </scroll-view>
+        wx:for="{{categories}}"
+        wx:key="code"
+        class="cat-item {{activeCategoryCode === item.code ? 'active' : ''}}"
+        data-code="{{item.code}}"
+        bindtap="onCategoryTap"
+      >{{item.icon}} {{item.name}}</view>
+    </view>
+  </scroll-view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="state">加载中...</view>
+
+  <!-- 加载失败 -->
+  <view wx:elif="{{error}}" class="state">
+    <view class="state-text">{{error}}</view>
+    <button class="retry-btn" bindtap="loadNext">重试</button>
   </view>
 
-  <!-- 平台 Tab（点击切换，与 swiper 联动） -->
-  <view class="tabs">
-    <view
-      wx:for="{{platforms}}"
-      wx:key="id"
-      class="tab {{activePlatform === item.id ? 'tab-active' : ''}}"
-      data-platform="{{item.id}}"
-      bindtap="onTabTap"
-    >{{item.name}}</view>
+  <!-- 分类答完 -->
+  <view wx:elif="{{finished}}" class="state">
+    <view class="finished-icon">🎉</view>
+    <view class="state-text">这个分类暂时答完啦</view>
+    <button class="retry-btn" bindtap="onSeeRecommend">看看推荐</button>
   </view>
 
-  <view wx:if="{{lastUpdateTime}}" class="update-time">更新于 {{lastUpdateTime}}</view>
+  <!-- 题目卡 -->
+  <view wx:elif="{{question}}" class="question-card">
+    <view class="q-cat">{{question.categoryName}}</view>
+    <view class="q-content">{{question.content}}</view>
 
-  <!-- 榜单：swiper 左右滑动切换平台（懒加载，各自缓存） -->
-  <swiper class="swiper" current="{{current}}" bindchange="onSwiperChange">
-    <swiper-item wx:for="{{platforms}}" wx:key="id">
-      <scroll-view
-        scroll-y
-        class="platform-scroll"
-        refresher-enabled
-        refresher-triggered="{{refreshing}}"
-        bindrefresherrefresh="onRefresh"
-      >
-        <view class="hot-list">
-          <view
-            wx:for="{{platformCache[item.id] || []}}"
-            wx:for-item="hot"
-            wx:key="rank"
-            class="hot-item"
-            data-url="{{hot.url}}"
-            bindtap="onHotTap"
-          >
-            <text class="hot-rank {{hot.rank <= 3 ? 'hot-rank-top' : ''}}">{{hot.rank}}</text>
-            <text class="hot-title">{{hot.title}}</text>
-          </view>
-
-          <view wx:if="{{!platformLoaded[item.id]}}" class="state-tip">加载中...</view>
-          <view
-            wx:elif="{{!(platformCache[item.id] && platformCache[item.id].length)}}"
-            class="state-tip"
-          >暂时没有可用热点</view>
-        </view>
-      </scroll-view>
-    </swiper-item>
-  </swiper>
-
-  <!-- 共同热点详情弹层 -->
-  <view wx:if="{{showCommonDetail}}" class="common-mask" bindtap="onCloseCommonDetail">
-    <view class="common-detail" catchtap="noop">
-      <view class="common-detail-title">相关热点</view>
+    <!-- 未答：选项按钮（答题前不展示比例） -->
+    <block wx:if="{{!question.answered}}">
       <view
-        wx:for="{{commonDetail}}"
-        wx:key="title"
-        class="common-detail-item"
-        data-index="{{index}}"
-        bindtap="onCommonItemTap"
+        wx:for="{{question.options}}"
+        wx:key="id"
+        class="option {{submitting ? 'disabled' : ''}}"
+        data-oid="{{item.id}}"
+        bindtap="onOptionTap"
       >
-        <text class="common-detail-platform">{{item.platformName}}</text>
-        <text class="common-detail-text">{{item.title}}</text>
+        <text class="opt-icon">{{item.icon}}</text>
+        <text class="opt-text">{{item.content}}</text>
       </view>
-      <view class="common-detail-close" bindtap="onCloseCommonDetail">关闭</view>
-    </view>
+      <view class="answer-count">已有 {{question.answerCountText}} 人回答</view>
+    </block>
+
+    <!-- 已答：结果态 -->
+    <block wx:else>
+      <view
+        wx:for="{{question.options}}"
+        wx:key="id"
+        class="option result {{item.id === question.myOptionId ? 'mine' : ''}}"
+      >
+        <view class="opt-row">
+          <text class="opt-icon">{{item.icon}}</text>
+          <text class="opt-text">{{item.content}}</text>
+          <text wx:if="{{item.id === question.myOptionId}}" class="mine-tag">✓ 你</text>
+          <text class="opt-percent">{{item.percentText}}</text>
+        </view>
+        <view class="bar-bg"><view class="bar" style="width: {{item.percent}}%;"></view></view>
+      </view>
+      <view class="feedback">原来 {{myPercentText}}% 的人和你一样</view>
+      <button class="next-btn" bindtap="onNext">下一题 →</button>
+    </block>
   </view>
 
-  <!-- 外部链接操作弹层（来源 + 复制） -->
-  <view wx:if="{{showAction}}" class="action-mask" bindtap="onCloseAction">
-    <view class="action-sheet" catchtap="noop">
-      <view class="action-title">该内容来自{{actionSource}}</view>
-      <view class="action-tip">{{actionTip}}</view>
-      <view class="action-btn" bindtap="onCopyLink">复制链接</view>
-      <view class="action-btn action-cancel" bindtap="onCloseAction">取消</view>
-    </view>
-  </view>
+  <!-- 首次设置用户名弹层 -->
+  <username-dialog
+    visible="{{showUsernameDialog}}"
+    bind:confirmed="onUsernameConfirmed"
+    bind:close="onUsernameClose"
+  />
 </view>
