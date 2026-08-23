@@ -26,6 +26,8 @@
     <view class="finished-icon">🎉</view>
     <view class="state-text">这个分类暂时答完啦</view>
     <button class="retry-btn" bindtap="onSeeRecommend">看看推荐</button>
+    <button class="retry-btn ghost" bindtap="onGoDecompress">去解压放松</button>
+    <button class="submit-link" bindtap="openSubmit">想不出了？出个你自己的题 →</button>
   </view>
 
   <!-- 题目卡 -->
@@ -74,4 +76,50 @@
     bind:confirmed="onUsernameConfirmed"
     bind:close="onUsernameClose"
   />
+
+  <!-- 出题投稿弹层 -->
+  <view wx:if="{{showSubmit}}" class="submit-mask" bindtap="closeSubmit">
+    <view class="submit-sheet" catchtap="noop">
+      <view class="submit-head">
+        <view class="submit-title">出题投稿</view>
+        <view class="submit-close" bindtap="closeSubmit">✕</view>
+      </view>
+      <scroll-view scroll-y class="submit-scroll">
+        <view class="submit-field">
+          <text class="submit-label">分类</text>
+          <view class="submit-cats">
+            <view
+              wx:for="{{realCategories}}"
+              wx:key="code"
+              class="submit-cat {{submitCategory === item.code ? 'active' : ''}}"
+              data-code="{{item.code}}"
+              bindtap="onPickCategory"
+            >{{item.icon}} {{item.name}}</view>
+          </view>
+        </view>
+        <view class="submit-field">
+          <text class="submit-label">问题</text>
+          <textarea
+            class="submit-input"
+            value="{{submitContent}}"
+            placeholder="写一道轻松、无标准答案的问题"
+            maxlength="100"
+            bindinput="onSubmitContent"
+          ></textarea>
+        </view>
+        <view class="submit-field">
+          <text class="submit-label">选项（2~6 个）</text>
+          <view wx:for="{{submitOptions}}" wx:key="index" class="submit-opt-row">
+            <input class="submit-opt-icon" value="{{item.icon}}" placeholder="图标" data-index="{{index}}" bindinput="onSubmitOptIcon" />
+            <input class="submit-opt-content" value="{{item.content}}" placeholder="选项内容" data-index="{{index}}" bindinput="onSubmitOptContent" />
+            <text class="submit-opt-del" data-index="{{index}}" bindtap="onRemoveOption">✕</text>
+          </view>
+          <view class="submit-opt-add" bindtap="onAddOption">＋ 添加选项</view>
+        </view>
+        <view wx:if="{{submitError}}" class="submit-error">{{submitError}}</view>
+        <button class="retry-btn" loading="{{submitSubmitting}}" disabled="{{submitSubmitting}}" bindtap="onSubmitQuestion">提交审核</button>
+        <view class="submit-tip">提交后需管理员审核，通过后就能让大家瞅瞅</view>
+      </scroll-view>
+    </view>
+  </view>
 </view>

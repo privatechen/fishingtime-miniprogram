@@ -71,6 +71,17 @@ Page({
     submitting: false,
     /** 我选的选项百分比（结果态反馈文案用） */
     myPercentText: '',
+    /** 出题投稿 */
+    showSubmit: false,
+    realCategories: [] as QaCategory[],
+    submitCategory: '',
+    submitContent: '',
+    submitOptions: [
+      { icon: '', content: '' },
+      { icon: '', content: '' },
+    ] as { icon: string; content: string }[],
+    submitError: '',
+    submitSubmitting: false,
   },
 
   onLoad() {
@@ -104,7 +115,7 @@ Page({
     try {
       const res = await get<QaCategory[]>('/api/qa/categories')
       if (res.code === 200 && res.data) {
-        this.setData({ categories: [RECOMMEND, ...res.data] })
+        this.setData({ categories: [RECOMMEND, ...res.data], realCategories: res.data })
       }
     } catch {
       // 分类加载失败不阻塞（推荐仍可用）
@@ -167,6 +178,94 @@ Page({
   onSeeRecommend() {
     this.setData({ activeCategoryCode: 'recommend' })
     this.loadNext()
+  },
+
+  /** 跳转解压工具 Tab */
+  onGoDecompress() {
+    wx.switchTab({ url: '/pages/games/games' })
+  },
+
+  // ────────────── 出题投稿 ──────────────
+
+  openSubmit() {
+    this.setData({ showSubmit: true, submitError: '' })
+  },
+
+  closeSubmit() {
+    this.setData({ showSubmit: false })
+  },
+
+  onPickCategory(e: WechatMiniprogram.TouchEvent) {
+    this.setData({ submitCategory: e.currentTarget.dataset.code as string })
+  },
+
+  onSubmitContent(e: WechatMiniprogram.Input) {
+    this.setData({ submitContent: e.detail.value })
+  },
+
+  onSubmitOptIcon(e: WechatMiniprogram.Input) {
+    const i = Number(e.currentTarget.dataset.index)
+    const key = `submitOptions[${i}].icon`
+    this.setData({ [key]: e.detail.value })
+  },
+
+  onSubmitOptContent(e: WechatMiniprogram.Input) {
+    const i = Number(e.currentTarget.dataset.index)
+    const key = `submitOptions[${i}].content`
+    this.setData({ [key]: e.detail.value })
+  },
+
+  onAddOption() {
+    if (this.data.submitOptions.length >= 6) {
+      wx.showToast({ title: '最多 6 个选项', icon: 'none' })
+      return
+    }
+    this.setData({ submitOptions: [...this.data.submitOptions, { icon: '', content: '' }] })
+  },
+
+  onRemoveOption(e: WechatMiniprogram.TouchEvent) {
+    const i = Number(e.currentTarget.dataset.index)
+    if (this.data.submitOptions.length <= 2) return
+    const opts = this.data.submitOptions.filter((_, idx) => idx !== i)
+    this.setData({ submitOptions: opts })
+  },
+
+  async onSubmitQuestion() {
+    if (this.data.submitSubmitting) return
+    const catId = this.data.realCategories.find((c) => c.code === this.data.submitCategory)?.id
+    if (!catId) {
+      this.setData({ submitError: '请选择分类' })
+      return
+    }
+    if (!this.data.submitContent.trim()) {
+      this.setData({ submitError: '请填写问题' })
+      return
+    }
+    const options = this.data.submitOptions
+      .map((o) => ({ content: o.content.trim(), icon: o.icon }))
+      .filter((o) => o.content)
+    if (options.length < 2) {
+      this.setData({ submitError: '至少填写 2 个选项' })
+      return
+    }
+    this.setData({ submitSubmitting: true, submitError: '' })
+    try {
+      const res = await post('/api/qa/submit', {
+        categoryId: catId,
+        content: this.data.submitContent.trim(),
+        options,
+      })
+      if (res.code === 200) {
+        this.setData({ showSubmit: false, submitContent: '', submitCategory: '' })
+        wx.showToast({ title: '提交成功，等待审核', icon: 'success' })
+      } else {
+        this.setData({ submitError: res.message || '提交失败' })
+      }
+    } catch {
+      this.setData({ submitError: '网络异常，请重试' })
+    } finally {
+      this.setData({ submitSubmitting: false })
+    }
   },
 
   /** 我选的选项百分比文本 */

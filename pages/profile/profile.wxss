@@ -1,17 +1,18 @@
 .page {
-  padding: 20rpx;
-  background: #f0f2f5;
+  padding: 24rpx;
+  background: #faf6f0;
   min-height: 100vh;
 }
 
 /* ── 身份区 ── */
 .identity-card {
   background: #fff;
-  border-radius: 16rpx;
+  border-radius: 28rpx;
   padding: 32rpx 24rpx;
   display: flex;
   align-items: center;
   gap: 20rpx;
+  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.04);
 }
 .identity-icon {
   font-size: 72rpx;
@@ -25,7 +26,7 @@
   font-weight: 600;
 }
 .save-btn {
-  background: #2d8cf0;
+  background: #ff7a45;
   color: #fff;
   font-size: 26rpx;
   border-radius: 32rpx;
@@ -37,20 +38,21 @@
   border: none;
 }
 .save-btn[disabled] {
-  background: #b3d3f7;
+  background: #f5c6a8;
   color: #fff;
 }
 
 /* ── 分区 ── */
 .section {
   background: #fff;
-  border-radius: 16rpx;
+  border-radius: 28rpx;
   margin-top: 20rpx;
-  padding: 4rpx 24rpx 8rpx;
+  padding: 4rpx 28rpx 8rpx;
+  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.04);
 }
 .section-title {
   font-size: 26rpx;
-  color: #86909c;
+  color: #9a9188;
   padding: 20rpx 0 8rpx;
 }
 
@@ -188,7 +190,7 @@
   border: none;
 }
 .feedback-submit {
-  background: #2d8cf0;
+  background: #ff7a45;
   color: #fff;
 }
 
@@ -196,7 +198,7 @@
 /* ── 修改用户名 ── */
 .edit-username-btn {
   background: #f2f3f5;
-  color: #2d8cf0;
+  color: #ff7a45;
   font-size: 24rpx;
   border-radius: 32rpx;
   padding: 10rpx 22rpx;
@@ -275,7 +277,7 @@
   color: #86909c;
 }
 .edit-submit {
-  background: #2d8cf0;
+  background: #ff7a45;
   color: #fff;
 }
 
@@ -396,8 +398,11 @@
   border-radius: 30rpx;
   font-size: 26rpx;
   height: 68rpx;
-  line-height: 68rpx;
+  line-height: 1;
   padding: 0 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .qa-retry::after {
   border: none;
@@ -512,7 +517,11 @@
   border-radius: 40rpx;
   font-size: 28rpx;
   height: 80rpx;
-  line-height: 80rpx;
+  line-height: 1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .qa-back-list::after {
   border: none;

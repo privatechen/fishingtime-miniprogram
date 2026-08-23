@@ -1,13 +1,14 @@
 .page {
-  padding: 20rpx;
-  background: #f0f2f5;
+  padding: 24rpx;
+  background: #faf6f0;
   min-height: 100vh;
 }
 
 .game-list {
   background: #fff;
-  border-radius: 16rpx;
-  padding: 8rpx 24rpx;
+  border-radius: 28rpx;
+  padding: 8rpx 32rpx;
+  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.04);
 }
 
 .game-card {
@@ -43,15 +44,16 @@
 .game-name {
   font-size: 32rpx;
   font-weight: 600;
+  color: #332d27;
 }
 .game-desc {
   font-size: 24rpx;
-  color: #86909c;
+  color: #9a9188;
   margin-top: 6rpx;
 }
 
 .game-arrow {
-  color: #c9cdd4;
+  color: #ff7a45;
   font-size: 40rpx;
   line-height: 1;
 }

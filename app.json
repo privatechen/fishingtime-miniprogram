@@ -16,18 +16,18 @@
     "navigationBarTitleText": "FishingTime",
     "navigationBarBackgroundColor": "#ffffff",
     "navigationBarTextStyle": "black",
-    "backgroundColor": "#f0f2f5",
+    "backgroundColor": "#faf6f0",
     "backgroundTextStyle": "dark"
   },
   "tabBar": {
-    "color": "#86909c",
-    "selectedColor": "#2d8cf0",
-    "backgroundColor": "#ffffff",
-    "borderStyle": "black",
+    "color": "#9a9188",
+    "selectedColor": "#ff7a45",
+    "backgroundColor": "#fffdf9",
+    "borderStyle": "white",
     "list": [
-      { "pagePath": "pages/index/index", "text": "瞅瞅" },
-      { "pagePath": "pages/games/games", "text": "解压工具" },
-      { "pagePath": "pages/profile/profile", "text": "我的" }
+      { "pagePath": "pages/index/index", "text": "瞅瞅", "iconPath": "assets/tab/eye.png", "selectedIconPath": "assets/tab/eye-active.png" },
+      { "pagePath": "pages/games/games", "text": "解压工具", "iconPath": "assets/tab/game.png", "selectedIconPath": "assets/tab/game-active.png" },
+      { "pagePath": "pages/profile/profile", "text": "我的", "iconPath": "assets/tab/me.png", "selectedIconPath": "assets/tab/me-active.png" }
     ]
   },
   "style": "v2",
