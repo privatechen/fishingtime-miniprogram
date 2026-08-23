@@ -18,6 +18,27 @@
     >修改用户名</button>
   </view>
 
+  <!-- 我的瞅瞅 -->
+  <view wx:if="{{loggedIn}}" class="section qa-card">
+    <view class="section-title">我的瞅瞅</view>
+    <view class="qa-stats">
+      <view class="qa-stat">
+        <view class="qa-num">{{qaStats.answerCount}}</view>
+        <view class="qa-label">回答问题</view>
+      </view>
+      <view class="qa-stat">
+        <view wx:if="{{qaStats.answerCount > 0}}" class="qa-num">{{qaStats.majorityRate}}%</view>
+        <view wx:else class="qa-num qa-none">还没瞅过</view>
+        <view class="qa-label">大众派</view>
+      </view>
+    </view>
+    <view wx:if="{{qaStats.majorityTitle}}" class="qa-title">「{{qaStats.majorityTitle}}」</view>
+    <view class="qa-answers-entry" bindtap="openQaAnswers">
+      <text>我的回答</text>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
   <!-- 我的游戏 -->
   <view class="section">
     <view class="section-title">我的解压程度</view>
@@ -89,6 +110,69 @@
         <button class="edit-btn edit-cancel" bindtap="onEditUsernameClose">取消</button>
         <button class="edit-btn edit-submit" loading="{{editSubmitting}}" disabled="{{editSubmitting}}" bindtap="onEditUsernameSubmit">确认</button>
       </view>
+    </view>
+  </view>
+
+  <!-- 我的回答弹层 -->
+  <view wx:if="{{showQaAnswers}}" class="qa-mask" bindtap="closeQaAnswers">
+    <view class="qa-sheet" catchtap="noop">
+      <view class="qa-sheet-head">
+        <view class="qa-sheet-title">我的回答</view>
+        <view class="qa-sheet-close" bindtap="closeQaAnswers">✕</view>
+      </view>
+
+      <!-- 历史列表 -->
+      <block wx:if="{{!qaDetail}}">
+        <view wx:if="{{qaError}}" class="qa-state">
+          <view>{{qaError}}</view>
+          <button class="qa-retry" bindtap="onQaRetry">重试</button>
+        </view>
+        <scroll-view wx:else scroll-y class="qa-scroll" bindscrolltolower="onQaScrollBottom">
+          <view wx:if="{{qaList.length === 0 && !qaLoading}}" class="qa-empty">还没留下选择，去瞅瞅大家怎么选吧</view>
+          <view
+            wx:for="{{qaList}}"
+            wx:key="questionId"
+            class="qa-item"
+            data-qid="{{item.questionId}}"
+            bindtap="onQaItemTap"
+          >
+            <view class="qa-item-q">{{item.question}}</view>
+            <view class="qa-item-mine">你选：{{item.myAnswer}}</view>
+            <view class="qa-item-foot">
+              <text wx:if="{{item.sameRate != null}}" class="qa-item-rate">{{item.sameRate}}% 的人和你一样</text>
+              <text wx:else class="qa-item-rate">题目已下线</text>
+              <text class="qa-item-date">{{item.answeredDate}}</text>
+            </view>
+          </view>
+          <view wx:if="{{qaLoading}}" class="qa-state">加载中...</view>
+          <view wx:if="{{!qaHasMore && qaList.length > 0}}" class="qa-end">没有更多了</view>
+        </scroll-view>
+      </block>
+
+      <!-- 结果态详情 -->
+      <block wx:else>
+        <scroll-view scroll-y class="qa-scroll">
+          <view wx:if="{{qaDetail}}" class="qa-detail">
+            <view class="qa-detail-cat">{{qaDetail.categoryName}}</view>
+            <view class="qa-detail-q">{{qaDetail.content}}</view>
+            <view
+              wx:for="{{qaDetail.options}}"
+              wx:key="id"
+              class="qa-detail-option {{item.id === qaDetail.myOptionId ? 'mine' : ''}}"
+            >
+              <view class="qa-detail-opt-row">
+                <text class="opt-icon">{{item.icon}}</text>
+                <text class="opt-text">{{item.content}}</text>
+                <text wx:if="{{item.id === qaDetail.myOptionId}}" class="mine-tag">✓ 你</text>
+                <text class="opt-percent">{{item.percentText}}</text>
+              </view>
+              <view class="bar-bg"><view class="bar" style="width: {{item.percent}}%;"></view></view>
+            </view>
+            <view class="qa-detail-tip">该题已作答，不能再次投票</view>
+            <button class="qa-back-list" bindtap="onQaDetailBack">返回列表</button>
+          </view>
+        </scroll-view>
+      </block>
     </view>
   </view>
 </view>

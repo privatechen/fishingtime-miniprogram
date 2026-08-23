@@ -33,6 +33,39 @@ interface GameRecordView {
   secondaryValue: string
 }
 
+/** 「我的瞅瞅」统计 */
+interface QaStats {
+  answerCount: number
+  majorityRate: number
+  majorityTitle: string
+}
+/** 我的回答历史条目 */
+interface QaHistoryItem {
+  questionId: number
+  question: string
+  myAnswer: string
+  sameRate: number | null
+  majority: boolean
+  answeredAt: string
+  /** 展示用（预计算） */
+  answeredDate: string
+}
+/** 题目结果态（选项 + 比例） */
+interface QaOptionView {
+  id: number
+  content: string
+  icon: string
+  percent: number | null
+  percentText: string
+}
+interface QaQuestionView {
+  id: number
+  categoryName: string
+  content: string
+  myOptionId: number | null
+  options: QaOptionView[]
+}
+
 /** 本机本地成绩（游戏接入时写入这些 key）；审核期仅保留展示的三个 */
 interface LocalRecords {
   'color-focus'?: { best?: number; accuracy?: number }
@@ -59,6 +92,16 @@ Page({
     editUsername: '',
     editError: '',
     editSubmitting: false,
+    /** 我的瞅瞅 */
+    qaStats: { answerCount: 0, majorityRate: 0, majorityTitle: '' } as QaStats,
+    showQaAnswers: false,
+    qaList: [] as QaHistoryItem[],
+    qaLoading: false,
+    qaError: '',
+    qaPage: 1,
+    qaHasMore: false,
+    qaDetail: null as QaQuestionView | null,
+    qaDetailLoading: false,
   },
 
   onShow() {
@@ -66,6 +109,110 @@ Page({
     const user = getUser()
     this.setData({ loggedIn, nickname: user?.nickname || '未登录' })
     this.refreshGames()
+    if (loggedIn) this.loadQaStats()
+  },
+
+  // ────────────── 我的瞅瞅 ──────────────
+
+  /** 加载瞅瞅统计 */
+  async loadQaStats() {
+    try {
+      const res = await get<QaStats>('/api/qa/profile/stats')
+      if (res.code === 200 && res.data) {
+        this.setData({ qaStats: res.data })
+      }
+    } catch {
+      // 统计失败不影响解压成绩
+    }
+  },
+
+  /** 打开我的回答弹层 */
+  openQaAnswers() {
+    this.setData({ showQaAnswers: true, qaDetail: null, qaList: [], qaPage: 1, qaHasMore: false, qaError: '' })
+    this.loadQaAnswers(1)
+  },
+
+  closeQaAnswers() {
+    this.setData({ showQaAnswers: false, qaDetail: null })
+  },
+
+  /** 加载我的回答（分页） */
+  async loadQaAnswers(page: number) {
+    if (this.data.qaLoading) return
+    this.setData({ qaLoading: true, qaError: '' })
+    try {
+      const res = await get<{ items: QaHistoryItem[]; total: number; page: number; pageSize: number }>(
+        `/api/qa/answers?page=${page}&pageSize=20`,
+      )
+      if (res.code === 200 && res.data) {
+        const items = (res.data.items || []).map((it) => ({
+          ...it,
+          answeredDate: this.fmtDate(it.answeredAt),
+        }))
+        const list = page === 1 ? items : [...this.data.qaList, ...items]
+        this.setData({
+          qaList: list,
+          qaPage: page,
+          qaHasMore: list.length < res.data.total,
+          qaLoading: false,
+        })
+      } else {
+        this.setData({ qaError: res.message || '加载失败', qaLoading: false })
+      }
+    } catch {
+      this.setData({ qaError: '网络异常，请重试', qaLoading: false })
+    }
+  },
+
+  onQaScrollBottom() {
+    if (this.data.qaHasMore && !this.data.qaLoading) {
+      this.loadQaAnswers(this.data.qaPage + 1)
+    }
+  },
+
+  onQaRetry() {
+    this.loadQaAnswers(this.data.qaPage)
+  },
+
+  /** 点击历史条目 → 展示题目结果态 */
+  async onQaItemTap(e: WechatMiniprogram.TouchEvent) {
+    const qid = Number(e.currentTarget.dataset.qid)
+    if (this.data.qaDetailLoading) return
+    this.setData({ qaDetailLoading: true })
+    try {
+      const res = await get<QaQuestionView>(`/api/qa/questions/${qid}`)
+      if (res.code === 200 && res.data) {
+        const q = res.data
+        this.setData({
+          qaDetail: {
+            ...q,
+            options: (q.options || []).map((o) => ({
+              ...o,
+              percentText: o.percent != null ? `${o.percent.toFixed(1)}%` : '',
+            })),
+          },
+          qaDetailLoading: false,
+        })
+      } else {
+        wx.showToast({ title: res.message || '加载失败', icon: 'none' })
+        this.setData({ qaDetailLoading: false })
+      }
+    } catch {
+      wx.showToast({ title: '网络异常，请重试', icon: 'none' })
+      this.setData({ qaDetailLoading: false })
+    }
+  },
+
+  onQaDetailBack() {
+    this.setData({ qaDetail: null })
+  },
+
+  /** 回答时间格式化为「M月D日」 */
+  fmtDate(iso: string): string {
+    if (!iso) return ''
+    const d = new Date(iso.replace(' ', 'T'))
+    if (Number.isNaN(d.getTime())) return iso
+    return `${d.getMonth() + 1}月${d.getDate()}日`
   },
 
   /** 刷新成绩：登录拉后端，游客读本地 */
