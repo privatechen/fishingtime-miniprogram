@@ -36,12 +36,12 @@
     <view class="q-cat">{{question.categoryName}}</view>
     <view class="q-content">{{question.content}}</view>
 
-    <!-- 未答：选项按钮（答题前不展示比例） -->
+    <!-- 未答：先选中，确认后才提交 -->
     <block wx:if="{{!question.answered}}">
       <view
         wx:for="{{question.options}}"
         wx:key="id"
-        class="option {{submitting ? 'disabled' : ''}}"
+        class="option {{submitting ? 'disabled' : ''}} {{item.id === selectedOptionId ? 'selected' : ''}}"
         data-oid="{{item.id}}"
         bindtap="onOptionTap"
       >
@@ -49,6 +49,13 @@
         <text class="opt-text">{{item.content}}</text>
       </view>
       <view class="answer-count">已有 {{question.answerCountText}} 人回答</view>
+      <button
+        wx:if="{{selectedOptionId != null}}"
+        class="confirm-btn"
+        loading="{{submitting}}"
+        disabled="{{submitting}}"
+        bindtap="onConfirmAnswer"
+      >确认</button>
     </block>
 
     <!-- 已答：结果态 -->
@@ -169,18 +176,25 @@
             <view wx:if="{{mineDetail.rejectReason}}" class="mine-reason">驳回原因：{{mineDetail.rejectReason}}</view>
             <view class="mine-detail-q">{{mineDetail.content}}</view>
 
-            <!-- 待审且未答：可回答 -->
+            <!-- 待审且未答：先选中，确认后才提交 -->
             <block wx:if="{{mineDetail.status === 0 && !mineDetail.answered}}">
               <view
                 wx:for="{{mineDetail.options}}"
                 wx:key="id"
-                class="submit-opt-row mine-answer-opt"
+                class="submit-opt-row mine-answer-opt {{item.id === mineSelectedOptionId ? 'selected' : ''}}"
                 data-oid="{{item.id}}"
                 bindtap="onMineOptionTap"
               >
                 <text class="opt-icon">{{item.icon}}</text>
                 <text class="opt-text">{{item.content}}</text>
               </view>
+              <button
+                wx:if="{{mineSelectedOptionId != null}}"
+                class="confirm-btn"
+                loading="{{mineSubmitting}}"
+                disabled="{{mineSubmitting}}"
+                bindtap="onConfirmMineAnswer"
+              >确认</button>
               <view class="submit-tip">选一个你的答案，通过后会算进统计</view>
             </block>
 

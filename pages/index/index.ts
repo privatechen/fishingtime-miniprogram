@@ -54,7 +54,7 @@ interface QaMySubmitVO {
   options: QaOption[]
 }
 
-const RECOMMEND: QaCategory = { id: 0, code: 'recommend', name: '推荐', icon: '✨' }
+const RECOMMEND: QaCategory = { id: 0, code: 'recommend', name: '瞅瞅大家怎么选', icon: '✨' }
 
 /** 数字千分位 */
 function fmt(n: number): string {
@@ -83,6 +83,8 @@ Page({
     error: '',
     showUsernameDialog: false,
     submitting: false,
+    /** 本地选中（确认前）的选项 id，null=未选 */
+    selectedOptionId: null as number | null,
     /** 我选的选项百分比（结果态反馈文案用） */
     myPercentText: '',
     /** 出题投稿 */
@@ -103,6 +105,8 @@ Page({
     mineList: [] as QaMySubmitVO[],
     mineDetail: null as QaMySubmitVO | null,
     mineSubmitting: false,
+    /** 本地选中（确认前）的选项 id，null=未选 */
+    mineSelectedOptionId: null as number | null,
   },
 
   onLoad() {
@@ -144,7 +148,14 @@ Page({
   },
 
   async loadNext() {
-    this.setData({ loading: true, error: '', finished: false, question: null, myPercentText: '' })
+    this.setData({
+      loading: true,
+      error: '',
+      finished: false,
+      question: null,
+      myPercentText: '',
+      selectedOptionId: null,
+    })
     try {
       const res = await get<QaNextResponse>(
         `/api/qa/questions/next?categoryCode=${this.data.activeCategoryCode}`,
@@ -172,10 +183,19 @@ Page({
     this.loadNext()
   },
 
-  async onOptionTap(e: WechatMiniprogram.TouchEvent) {
+  onOptionTap(e: WechatMiniprogram.TouchEvent) {
     const question = this.data.question
     if (this.data.submitting || !question || question.answered) return
     const optionId = Number(e.currentTarget.dataset.oid)
+    // 仅本地选中，点「确认」后才提交，可改选
+    this.setData({ selectedOptionId: optionId })
+  },
+
+  async onConfirmAnswer() {
+    const question = this.data.question
+    if (this.data.submitting || !question || question.answered) return
+    const optionId = this.data.selectedOptionId
+    if (optionId == null) return
     this.setData({ submitting: true })
     try {
       const res = await post<QaQuestion>(`/api/qa/questions/${question.id}/answer`, { optionId })
@@ -308,7 +328,7 @@ Page({
 
   /** 打开我的投稿弹层 */
   async openMine() {
-    this.setData({ showMine: true, mineDetail: null })
+    this.setData({ showMine: true, mineDetail: null, mineSelectedOptionId: null })
     try {
       const res = await get<QaMySubmitVO[]>('/api/qa/questions/mine')
       if (res.code === 200 && res.data) {
@@ -327,23 +347,31 @@ Page({
   },
 
   closeMine() {
-    this.setData({ showMine: false, mineDetail: null })
+    this.setData({ showMine: false, mineDetail: null, mineSelectedOptionId: null })
   },
 
   onMineItemTap(e: WechatMiniprogram.TouchEvent) {
     const idx = Number(e.currentTarget.dataset.index)
-    this.setData({ mineDetail: this.data.mineList[idx] })
+    this.setData({ mineDetail: this.data.mineList[idx], mineSelectedOptionId: null })
   },
 
   onMineBack() {
     this.setData({ mineDetail: null })
   },
 
-  /** 回答自己的待审题 */
-  async onMineOptionTap(e: WechatMiniprogram.TouchEvent) {
+  /** 回答自己的待审题：本地选中，点「确认」后提交 */
+  onMineOptionTap(e: WechatMiniprogram.TouchEvent) {
     const detail = this.data.mineDetail
     if (this.data.mineSubmitting || !detail || detail.answered) return
     const optionId = Number(e.currentTarget.dataset.oid)
+    this.setData({ mineSelectedOptionId: optionId })
+  },
+
+  async onConfirmMineAnswer() {
+    const detail = this.data.mineDetail
+    if (this.data.mineSubmitting || !detail || detail.answered) return
+    const optionId = this.data.mineSelectedOptionId
+    if (optionId == null) return
     this.setData({ mineSubmitting: true })
     try {
       const res = await post<QaQuestion>(`/api/qa/questions/${detail.questionId}/answer`, { optionId })

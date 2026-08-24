@@ -93,6 +93,7 @@
   display: flex;
   align-items: center;
   background: #f7f3ee;
+  border: 2rpx solid transparent;
   border-radius: 22rpx;
   padding: 26rpx 24rpx;
   margin-bottom: 18rpx;
@@ -101,6 +102,10 @@
 }
 .option.disabled {
   opacity: 0.6;
+}
+.option.selected {
+  background: #fff2e8;
+  border-color: #ff7a45;
 }
 .opt-icon {
   font-size: 34rpx;
@@ -160,17 +165,25 @@
   font-size: 26rpx;
   margin: 20rpx 0;
 }
-.next-btn {
+.next-btn,
+.confirm-btn {
   background: #ff7a45;
   color: #fff;
   border-radius: 44rpx;
   font-size: 30rpx;
   font-weight: 600;
   height: 92rpx;
-  line-height: 92rpx;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.next-btn::after {
+.next-btn::after,
+.confirm-btn::after {
   border: none;
+}
+.confirm-btn {
+  margin-top: 24rpx;
 }
 
 /* ── 答完状态按钮 ── */
@@ -377,9 +390,14 @@
 }
 .mine-answer-opt {
   background: #f7f3ee;
+  border: 2rpx solid transparent;
   border-radius: 18rpx;
   padding: 20rpx 22rpx;
   margin-bottom: 16rpx;
+}
+.mine-answer-opt.selected {
+  background: #fff2e8;
+  border-color: #ff7a45;
 }
 .mine-back {
   margin-top: 24rpx;
